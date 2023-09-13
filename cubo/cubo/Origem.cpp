@@ -40,11 +40,12 @@ const GLchar* vertexShaderSource = "#version 450\n"
 "layout (location = 0) in vec3 position;\n"
 "layout (location = 1) in vec3 color;\n"
 "uniform mat4 model;\n"
+"uniform mat4 projection;\n"
 "out vec4 finalColor;\n"
 "void main()\n"
 "{\n"
 //...pode ter mais linhas de código aqui!
-"gl_Position = model * vec4(position, 1.0);\n"
+"gl_Position = projection * model * vec4(position, 1.0);\n"
 "finalColor = vec4(color, 1.0);\n"
 "}\0";
 
@@ -113,11 +114,18 @@ int main()
 
 	glUseProgram(shaderID);
 
+	// Criando a matriz de modelo
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	GLint modelLoc = glGetUniformLocation(shaderID, "model");
 	//
 	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
+
+	//Criando a matriz de projeção
+	glm::mat4 projection = glm::mat4(1); //matriz identidade;
+	GLint projLoc = glGetUniformLocation(shaderID, "projection");
+	projection = glm::ortho(-1.0, 1.0, -1.0, 1.0, -10.0, 10.0);
+	glUniformMatrix4fv(projLoc, 1, FALSE, glm::value_ptr(projection));
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -166,7 +174,7 @@ int main()
 		// CONTORNO - GL_LINE_LOOP
 		// VERTICES - GL_POINTS
 		
-		glDrawArrays(GL_POINTS, 0, 426);
+		//glDrawArrays(GL_POINTS, 0, 426);
 		glBindVertexArray(0);
 
 		// Troca os buffers da tela

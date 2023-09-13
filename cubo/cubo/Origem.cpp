@@ -24,39 +24,17 @@ using namespace std;
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Shader.h"
+
 
 // Protótipo da função de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // Protótipos das funções
-int setupShader();
 int setupGeometry();
 
 // Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
-
-// Código fonte do Vertex Shader (em GLSL): ainda hardcoded
-const GLchar* vertexShaderSource = "#version 450\n"
-"layout (location = 0) in vec3 position;\n"
-"layout (location = 1) in vec3 color;\n"
-"uniform mat4 model;\n"
-"uniform mat4 projection;\n"
-"out vec4 finalColor;\n"
-"void main()\n"
-"{\n"
-//...pode ter mais linhas de código aqui!
-"gl_Position = projection * model * vec4(position, 1.0);\n"
-"finalColor = vec4(color, 1.0);\n"
-"}\0";
-
-//Códifo fonte do Fragment Shader (em GLSL): ainda hardcoded
-const GLchar* fragmentShaderSource = "#version 450\n"
-"in vec4 finalColor;\n"
-"out vec4 color;\n"
-"void main()\n"
-"{\n"
-"color = finalColor;\n"
-"}\n\0";
 
 bool rotateX=false, rotateY=false, rotateZ=false;
 
@@ -106,26 +84,24 @@ int main()
 
 
 	// Compilando e buildando o programa de shader
-	GLuint shaderID = setupShader();
+	Shader shader("../shaders/cubo.vs", "../shaders/cubo.fs");
 
 	// Gerando um buffer simples, com a geometria de um triângulo
 	GLuint VAO = setupGeometry();
 
 
-	glUseProgram(shaderID);
+	glUseProgram(shader.ID);
 
 	// Criando a matriz de modelo
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
-	GLint modelLoc = glGetUniformLocation(shaderID, "model");
 	//
 	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
+	shader.setMat4("model", glm::value_ptr(model));
 
 	//Criando a matriz de projeção
 	glm::mat4 projection = glm::mat4(1); //matriz identidade;
-	GLint projLoc = glGetUniformLocation(shaderID, "projection");
-	projection = glm::ortho(-1.0, 1.0, -1.0, 1.0, -10.0, 10.0);
-	glUniformMatrix4fv(projLoc, 1, FALSE, glm::value_ptr(projection));
+	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+	shader.setMat4("projection", glm::value_ptr(projection));
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -163,7 +139,7 @@ int main()
 
 		}
 
-		glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
+		shader.setMat4("model", glm::value_ptr(model));
 		
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
@@ -220,53 +196,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 }
 
-//Esta função está basntante hardcoded - objetivo é compilar e "buildar" um programa de
-// shader simples e único neste exemplo de código
-// O código fonte do vertex e fragment shader está nos arrays vertexShaderSource e
-// fragmentShader source no iniçio deste arquivo
-// A função retorna o identificador do programa de shader
-int setupShader()
-{
-	// Vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	// Checando erros de compilação (exibição via log no terminal)
-	GLint success;
-	GLchar infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-	// Fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	// Checando erros de compilação (exibição via log no terminal)
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-	// Linkando os shaders e criando o identificador do programa de shader
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	// Checando por erros de linkagem
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
 
-	return shaderProgram;
-}
 
 // Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
 // geometria de um triângulo

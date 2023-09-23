@@ -92,15 +92,17 @@ int main()
 
 	glUseProgram(shader.ID);
 
-	// Criando a matriz de modelo
+	// Criando a matriz de modelo => matriz de transformação do objeto em si. Precisa colocar ela no shader pq é uma informação que vai ser usada por ele.
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	//
 	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	// envia a matriz de model pro shader
 	shader.setMat4("model", glm::value_ptr(model));
 
 	//Criando a matriz de projeção
 	glm::mat4 projection = glm::mat4(1); //matriz identidade;
-	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0); // x min, x max, y min, y max, z min, z max. z min deve ser negativo e z max, positivo.
+	// envia a matriz de model pro shader
 	shader.setMat4("projection", glm::value_ptr(projection));
 
 	glEnable(GL_DEPTH_TEST);
@@ -139,11 +141,16 @@ int main()
 
 		}
 
+		// manda informação de model pro shader
 		shader.setMat4("model", glm::value_ptr(model));
 		
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
+		// necessarios dar um bind no VAO antes de desenhar os triangulos de cada geometria.
+
+
 		glBindVertexArray(VAO);
+	    // desenha os triangulos. No caso da primitiva GL_TRIANGLES, a cada 3 vérices, ele fecha um triângulo válido.
 		glDrawArrays(GL_TRIANGLES, 0, 42);
 
 		// Chamada de desenho - drawcall
@@ -203,6 +210,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 // Apenas atributo coordenada nos vértices
 // 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
 // A função retorna o identificador do VAO
+// Ela criar o buffer com os vértices da geometria.
 int setupGeometry()
 {
 	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma

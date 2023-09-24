@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cubo", "cubo\cubo.vcxproj", "{22F2D7EC-DEFA-4D5F-A394-F953F3F456DE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tarefa02", "tarefa02\tarefa02.vcxproj", "{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{22F2D7EC-DEFA-4D5F-A394-F953F3F456DE}.Release|x64.Build.0 = Release|x64
 		{22F2D7EC-DEFA-4D5F-A394-F953F3F456DE}.Release|x86.ActiveCfg = Release|Win32
 		{22F2D7EC-DEFA-4D5F-A394-F953F3F456DE}.Release|x86.Build.0 = Release|Win32
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Debug|x64.ActiveCfg = Debug|x64
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Debug|x64.Build.0 = Debug|x64
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Debug|x86.ActiveCfg = Debug|Win32
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Debug|x86.Build.0 = Debug|Win32
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Release|x64.ActiveCfg = Release|x64
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Release|x64.Build.0 = Release|x64
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Release|x86.ActiveCfg = Release|Win32
+		{1E29B5AD-6EE1-49E2-8A65-5635860C28FB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

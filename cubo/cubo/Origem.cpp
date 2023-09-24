@@ -1,9 +1,9 @@
-/* Hello Triangle - código adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle
+/* Hello Triangle - cï¿½digo adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle
  *
  * Adaptado por Rossana Baptista Queiroz
- * para a disciplina de Processamento Gráfico/Computação Gráfica - Unisinos
- * Versão inicial: 7/4/2017
- * Última atualização em 09/08/2023
+ * para a disciplina de Processamento Grï¿½fico/Computaï¿½ï¿½o Grï¿½fica - Unisinos
+ * Versï¿½o inicial: 7/4/2017
+ * ï¿½ltima atualizaï¿½ï¿½o em 09/08/2023
  *
  */
 
@@ -27,26 +27,26 @@ using namespace std;
 #include "Shader.h"
 
 
-// Protótipo da função de callback de teclado
+// Protï¿½tipo da funï¿½ï¿½o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-// Protótipos das funções
+// Protï¿½tipos das funï¿½ï¿½es
 int setupGeometry();
 
-// Dimensões da janela (pode ser alterado em tempo de execução)
+// Dimensï¿½es da janela (pode ser alterado em tempo de execuï¿½ï¿½o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
 
 bool rotateX=false, rotateY=false, rotateZ=false;
 
-// Função MAIN
+// Funï¿½ï¿½o MAIN
 int main()
 {
-	// Inicialização da GLFW
+	// Inicializaï¿½ï¿½o da GLFW
 	glfwInit();
 
-	//Muita atenção aqui: alguns ambientes não aceitam essas configurações
-	//Você deve adaptar para a versão do OpenGL suportada por sua placa
-	//Sugestão: comente essas linhas de código para desobrir a versão e
+	//Muita atenï¿½ï¿½o aqui: alguns ambientes nï¿½o aceitam essas configuraï¿½ï¿½es
+	//Vocï¿½ deve adaptar para a versï¿½o do OpenGL suportada por sua placa
+	//Sugestï¿½o: comente essas linhas de cï¿½digo para desobrir a versï¿½o e
 	//depois atualize (por exemplo: 4.5 com 4 e 5)
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -57,27 +57,27 @@ int main()
 //	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 //#endif
 
-	// Criação da janela GLFW
+	// Criaï¿½ï¿½o da janela GLFW
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola 3D!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	// Fazendo o registro da função de callback para a janela GLFW
+	// Fazendo o registro da funï¿½ï¿½o de callback para a janela GLFW
 	glfwSetKeyCallback(window, key_callback);
 
-	// GLAD: carrega todos os ponteiros d funções da OpenGL
+	// GLAD: carrega todos os ponteiros d funï¿½ï¿½es da OpenGL
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 
 	}
 
-	// Obtendo as informações de versão
+	// Obtendo as informaï¿½ï¿½es de versï¿½o
 	const GLubyte* renderer = glGetString(GL_RENDERER); /* get renderer string */
 	const GLubyte* version = glGetString(GL_VERSION); /* version as a string */
 	cout << "Renderer: " << renderer << endl;
 	cout << "OpenGL version supported " << version << endl;
 
-	// Definindo as dimensões da viewport com as mesmas dimensões da janela da aplicação
+	// Definindo as dimensï¿½es da viewport com as mesmas dimensï¿½es da janela da aplicaï¿½ï¿½o
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
@@ -86,20 +86,20 @@ int main()
 	// Compilando e buildando o programa de shader
 	Shader shader("../shaders/cubo.vs", "../shaders/cubo.fs");
 
-	// Gerando um buffer simples, com a geometria de um triângulo
+	// Gerando um buffer simples, com a geometria de um triï¿½ngulo
 	GLuint VAO = setupGeometry();
 
 
 	glUseProgram(shader.ID);
 
-	// Criando a matriz de modelo => matriz de transformação do objeto em si. Precisa colocar ela no shader pq é uma informação que vai ser usada por ele.
+	// Criando a matriz de modelo => matriz de transformaï¿½ï¿½o do objeto em si. Precisa colocar ela no shader pq ï¿½ uma informaï¿½ï¿½o que vai ser usada por ele.
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	//
 	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// envia a matriz de model pro shader
 	shader.setMat4("model", glm::value_ptr(model));
 
-	//Criando a matriz de projeção
+	//Criando a matriz de projeï¿½ï¿½o
 	glm::mat4 projection = glm::mat4(1); //matriz identidade;
 	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0); // x min, x max, y min, y max, z min, z max. z min deve ser negativo e z max, positivo.
 	// envia a matriz de model pro shader
@@ -108,10 +108,10 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 
-	// Loop da aplicação - "game loop"
+	// Loop da aplicaï¿½ï¿½o - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
-		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as funções de callback correspondentes
+		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as funï¿½ï¿½es de callback correspondentes
 		glfwPollEvents();
 
 		// Limpa o buffer de cor
@@ -141,7 +141,7 @@ int main()
 
 		}
 
-		// manda informação de model pro shader
+		// manda informaï¿½ï¿½o de model pro shader
 		shader.setMat4("model", glm::value_ptr(model));
 		
 		// Chamada de desenho - drawcall
@@ -150,7 +150,7 @@ int main()
 
 
 		glBindVertexArray(VAO);
-	    // desenha os triangulos. No caso da primitiva GL_TRIANGLES, a cada 3 vérices, ele fecha um triângulo válido.
+	    // desenha os triangulos. No caso da primitiva GL_TRIANGLES, a cada 3 vï¿½rices, ele fecha um triï¿½ngulo vï¿½lido.
 		glDrawArrays(GL_TRIANGLES, 0, 42);
 
 		// Chamada de desenho - drawcall
@@ -165,13 +165,13 @@ int main()
 	}
 	// Pede pra OpenGL desalocar os buffers
 	glDeleteVertexArrays(1, &VAO);
-	// Finaliza a execução da GLFW, limpando os recursos alocados por ela
+	// Finaliza a execuï¿½ï¿½o da GLFW, limpando os recursos alocados por ela
 	glfwTerminate();
 	return 0;
 }
 
-// Função de callback de teclado - só pode ter uma instância (deve ser estática se
-// estiver dentro de uma classe) - É chamada sempre que uma tecla for pressionada
+// Funï¿½ï¿½o de callback de teclado - sï¿½ pode ter uma instï¿½ncia (deve ser estï¿½tica se
+// estiver dentro de uma classe) - ï¿½ chamada sempre que uma tecla for pressionada
 // ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -205,115 +205,115 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 
 
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
+// Esta funï¿½ï¿½o estï¿½ bastante harcoded - objetivo ï¿½ criar os buffers que armazenam a 
+// geometria de um triï¿½ngulo
+// Apenas atributo coordenada nos vï¿½rtices
 // 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
-// Ela criar o buffer com os vértices da geometria.
+// A funï¿½ï¿½o retorna o identificador do VAO
+// Ela criar o buffer com os vï¿½rtices da geometria.
 int setupGeometry()
 {
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
+	// Aqui setamos as coordenadas x, y e z do triï¿½ngulo e as armazenamos de forma
+	// sequencial, jï¿½ visando mandar para o VBO (Vertex Buffer Objects)
+	// Cada atributo do vï¿½rtice (coordenada, cores, coordenadas de textura, normal, etc)
+	// Pode ser arazenado em um VBO ï¿½nico ou em VBOs separados
 	GLfloat vertices[] = {
 		// => Cubo
 
-		//Base do cubo: 2 triângulos (violeta)
+		//Base do cubo: 2 triï¿½ngulos (violeta)
 		//x    y    z    r    g    b
-		-0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // v0
-		-0.5, -0.5,  0.5, 1.0, 0.0, 1.0, // v1
-		 0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // v2
+		-2.0, -2.0, -2.0, 4.0, 0.0, 4.0, // v0
+		-2.0, -2.0,  2.0, 4.0, 0.0, 4.0, // v1
+		 2.0, -2.0, -2.0, 4.0, 0.0, 4.0, // v2
 
-		 -0.5, -0.5, 0.5, 1.0, 0.0, 1.0, //v3
-		  0.5, -0.5, 0.5, 1.0, 0.0, 1.0, //v4 
-		  0.5, -0.5,-0.5, 1.0, 0.0, 1.0, //v5
+		 -2.0, -2.0, 2.0, 4.0, 0.0, 4.0, //v3
+		  2.0, -2.0, 2.0, 4.0, 0.0, 4.0, //v4 
+		  2.0, -2.0,-2.0, 4.0, 0.0, 4.0, //v5
 
-		  //Parte superior do cubo: 2 triângulos (verde)
+		  //Parte superior do cubo: 2 triï¿½ngulos (verde)
 		//x    y    z    r    g    b
-		-0.5, 0.5, -0.5, 0.0, 0.5, 0.0, // v6
-		-0.5, 0.5,  0.5, 0.0, 0.5, 0.0, // v7
-		 0.5, 0.5, -0.5, 0.0, 0.5, 0.0, // v8
+		-2.0, 2.0, -2.0, 0.0, 2.0, 0.0, // v6
+		-2.0, 2.0,  2.0, 0.0, 2.0, 0.0, // v7
+		 2.0, 2.0, -2.0, 0.0, 2.0, 0.0, // v8
 
-		 -0.5, 0.5, 0.5, 0.0, 0.5, 0.0, //v9
-		  0.5, 0.5, 0.5, 0.0, 0.5, 0.0, //v10 
-		  0.5, 0.5,-0.5, 0.0, 0.5, 0.0, //v11
+		 -2.0, 2.0, 2.0, 0.0, 2.0, 0.0, //v9
+		  2.0, 2.0, 2.0, 0.0, 2.0, 0.0, //v10 
+		  2.0, 2.0,-2.0, 0.0, 2.0, 0.0, //v11
 
 		  // Quadrado frontal (amarelo)
-		  -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v12
-		   -0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v13
-		   0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v14
+		  -2.0, -2.0, -2.0, 4.0, 4.0, 0.0, //v12
+		   -2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v13
+		   2.0, -2.0, -2.0, 4.0, 4.0, 0.0, //v14
 
-		   -0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v15
-		   0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v16
-		   0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v17
+		   -2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v15
+		   2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v16
+		   2.0, -2.0, -2.0, 4.0, 4.0, 0.0, //v17
 
 		   // Quadrado lateral direito (azul)
-		   0.5, -0.5, -0.5, 0.0, 1.0, 1.0, //v18
-		   0.5, 0.5, -0.5, 0.0, 1.0, 1.0, //v19
-		   0.5, -0.5, 0.5, 0.0, 1.0, 1.0, //v20
+		   2.0, -2.0, -2.0, 0.0, 4.0, 4.0, //v18
+		   2.0, 2.0, -2.0, 0.0, 4.0, 4.0, //v19
+		   2.0, -2.0, 2.0, 0.0, 4.0, 4.0, //v20
 
-		   0.5, 0.5, -0.5, 0.0, 1.0, 1.0, //v21
-		   0.5, 0.5, 0.5, 0.0, 1.0, 1.0, //v22
-		   0.5, -0.5, 0.5, 0.0, 1.0, 1.0, //v23
+		   2.0, 2.0, -2.0, 0.0, 4.0, 4.0, //v21
+		   2.0, 2.0, 2.0, 0.0, 4.0, 4.0, //v22
+		   2.0, -2.0, 2.0, 0.0, 4.0, 4.0, //v23
 
 		   // Quadrado lateral esquerdo (vermelho)
 
-			-0.5, -0.5, -0.5, 1.0, 0.0, 0.0, // v24
-			-0.5, 0.5, -0.5, 1.0, 0.0, 0.0, // v25
-			-0.5, -0.5, 0.5, 1.0, 0.0, 0.0, // v26
+			-2.0, -2.0, -2.0, 4.0, 0.0, 0.0, // v24
+			-2.0, 2.0, -2.0, 4.0, 0.0, 0.0, // v25
+			-2.0, -2.0, 2.0, 4.0, 0.0, 0.0, // v26
 
-			 -0.5, 0.5, -0.5, 1.0, 0.0, 0.0, //v27
-			 -0.5, 0.5, 0.5, 1.0, 0.0, 0.0, //v28
-			 -0.5, -0.5, 0.5, 1.0, 0.0, 0.0, //v29
+			 -2.0, 2.0, -2.0, 4.0, 0.0, 0.0, //v27
+			 -2.0, 2.0, 2.0, 4.0, 0.0, 0.0, //v28
+			 -2.0, -2.0, 2.0, 4.0, 0.0, 0.0, //v29
 
 		  // Quadrado traseiro (laranja)
-		 -0.5, -0.5, 0.5, 1.0, 0.5, 0.0, //v30
-		 -0.5, 0.5, 0.5, 1.0, 0.5, 0.0, //v31
-		  0.5, -0.5, 0.5, 1.0, 0.5, 0.0, //v32
+		 -2.0, -2.0, 2.0, 4.0, 2.0, 0.0, //v30
+		 -2.0, 2.0, 2.0, 4.0, 2.0, 0.0, //v31
+		  2.0, -2.0, 2.0, 4.0, 2.0, 0.0, //v32
 
-		  -0.5, 0.5, 0.5, 1.0, 0.5, 0.0, //v33
-		  0.5, 0.5,  0.5, 1.0, 0.5, 0.0, //v34
-		  0.5, -0.5, 0.5, 1.0, 0.5, 0.0, //v35
+		  -2.0, 2.0, 2.0, 4.0, 2.0, 0.0, //v33
+		  2.0, 2.0,  2.0, 4.0, 2.0, 0.0, //v34
+		  2.0, -2.0, 2.0, 4.0, 2.0, 0.0, //v35
 
-		  // => Chão (marrom)
-		-1.0, -0.5, -1.0, 0.9, 0.5, 0.4, // v0
-		-1.0, -0.5,  1.0, 0.9, 0.5, 0.4, // v1
-		 1.0, -0.5, -1.0, 0.9, 0.5, 0.4, // v2
+		  // => Chï¿½o (marrom)
+		-4.0, -2.0, -4.0, 0.9, 0.5, 0.4, // v0
+		-4.0, -2.0,  4.0, 0.9, 0.5, 0.4, // v1
+		 4.0, -2.0, -4.0, 0.9, 0.5, 0.4, // v2
 
-		 -1.0, -0.5, 1.0, 0.9, 0.5, 0.4, //v3
-		  1.0, -0.5, 1.0, 0.9, 0.5, 0.4, //v4 
-		  1.0, -0.5, -1.0, 0.9, 0.5, 0.4, //v5
+		 -4.0, -2.0, 4.0, 0.9, 0.5, 0.4, //v3
+		  4.0, -2.0, 4.0, 0.9, 0.5, 0.4, //v4 
+		  4.0, -2.0, -4.0, 0.9, 0.5, 0.4, //v5
 	};
 
 	GLuint VBO, VAO;
 
-	//Geração do identificador do VBO
+	//Geraï¿½ï¿½o do identificador do VBO
 	glGenBuffers(1, &VBO);
 
-	//Faz a conexão (vincula) do buffer como um buffer de array
+	//Faz a conexï¿½o (vincula) do buffer como um buffer de array
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	//Envia os dados do array de floats para o buffer da OpenGl
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	//Geração do identificador do VAO (Vertex Array Object)
+	//Geraï¿½ï¿½o do identificador do VAO (Vertex Array Object)
 	glGenVertexArrays(1, &VAO);
 
-	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vértices
+	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vï¿½rtices
 	// e os ponteiros para os atributos 
 	glBindVertexArray(VAO);
 	
 	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
-	// Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
+	// Localizaï¿½ï¿½o no shader * (a localizaï¿½ï¿½o dos atributos devem ser correspondentes no layout especificado no vertex shader)
 	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
 	// Tipo do dado
-	// Se está normalizado (entre zero e um)
+	// Se estï¿½ normalizado (entre zero e um)
 	// Tamanho em bytes 
 	// Deslocamento a partir do byte zero 
 	
-	//Atributo posição (x, y, z)
+	//Atributo posiï¿½ï¿½o (x, y, z)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
@@ -323,11 +323,11 @@ int setupGeometry()
 
 
 
-	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
-	// atualmente vinculado - para que depois possamos desvincular com segurança
+	// Observe que isso ï¿½ permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vï¿½rtice 
+	// atualmente vinculado - para que depois possamos desvincular com seguranï¿½a
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
+	// Desvincula o VAO (ï¿½ uma boa prï¿½tica desvincular qualquer buffer ou array para evitar bugs medonhos)
 	glBindVertexArray(0);
 
 	return VAO;

@@ -101,7 +101,7 @@ int main()
 
 	//Criando a matriz de projeção
 	glm::mat4 projection = glm::mat4(1); //matriz identidade;
-	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0); // x min, x max, y min, y max, z min, z max. z min deve ser negativo e z max, positivo.
+	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0); // x min, x max, y min, y max, z min, z max. z min deve ser negativo e z max, positivo.
 	// envia a matriz de model pro shader
 	shader.setMat4("projection", glm::value_ptr(projection));
 

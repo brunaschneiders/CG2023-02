@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\cubo",
+    "\\cuboComMovimentacaoCamera"
   ],
-  "SelectedNode": "\\cubo.sln",
+  "SelectedNode": "\\cubo\\cubo.sln",
   "PreviewInSolutionExplorer": false
 }

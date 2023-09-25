@@ -89,7 +89,7 @@ int main()
 
 
 	// Compilando e buildando o programa de shader
-	Shader shader("../shaders/cubo.vs", "../shaders/cubo.fs");
+	Shader shader("./shaders/cubo.vs", "./shaders/cubo.fs");
 
 	// Gerando um buffer simples, com a geometria de um tri�ngulo
 	GLuint VAO = setupGeometry();

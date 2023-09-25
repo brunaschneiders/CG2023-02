@@ -124,7 +124,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\tarefa02\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,7 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\tarefa02\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

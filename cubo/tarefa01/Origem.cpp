@@ -58,7 +58,7 @@ int main()
 //#endif
 
 	// Cria��o da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola 3D!", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Cubo com projeção ortogonal", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da fun��o de callback para a janela GLFW
@@ -84,7 +84,7 @@ int main()
 
 
 	// Compilando e buildando o programa de shader
-	Shader shader("../shaders/cubo.vs", "../shaders/cubo.fs");
+	Shader shader("./shaders/cubo.vs", "./shaders/cubo.fs");
 
 	// Gerando um buffer simples, com a geometria de um tri�ngulo
 	GLuint VAO = setupGeometry();

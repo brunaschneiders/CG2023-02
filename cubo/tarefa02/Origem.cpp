@@ -29,6 +29,7 @@ using namespace std;
 
 // Prot�tipo da fun��o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // Prot�tipos das fun��es
 int setupGeometry();
@@ -40,8 +41,20 @@ bool rotateX=false, rotateY=false, rotateZ=false;
 
 // Variáveis de controle da câmera
 glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 15.0); // posição da camera => x, y, z
+// vetor correspondente ao eixo de profundidade => pra frente e pra trás
 glm::vec3 cameraFront = glm::vec3(0.0, 0.0, -1.0); // z é negativo pq o z de cameraPos é positivo (precisa sempre ser o inverso)
+// eixo que apontaria pra cima em relação à camera
 glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0); // eixo y
+// direita e esquerda à partir da camera. Ñ precisa armazenar, usamos só no momento de mover a camera pra direita ou esquerda, calculando no momento que a tecla é pressionada
+// cameraRight é calculado pelo prosproduct do cameraFront e cameraUp versus taxa do cameraSpeed
+// glm::vec3 cameraRight =
+
+glm::mat4 view = glm::mat4(1);
+bool firstMouse = true;
+float lastX = WIDTH / 2.0, lastY = HEIGHT / 2.0; //para calcular o quanto que o mouse deslocou​
+float yaw = -90.0, pitch = 0.0; //rotação em x e y​
+
+// Sugestão: desabilitar cursor do sistema operacional
 
 // Fun��o MAIN
 int main()
@@ -68,6 +81,12 @@ int main()
 
 	// Fazendo o registro da fun��o de callback para a janela GLFW
 	glfwSetKeyCallback(window, key_callback);
+
+	// Fazendo o registro da função mouse_callback  para a janela GLFW
+	glfwSetCursorPosCallback(window, mouse_callback);
+
+	// seta a posição do mouse para começar no meio da tela
+	glfwSetCursorPos(window, WIDTH / 2, HEIGHT / 2);
 
 	// GLAD: carrega todos os ponteiros d fun��es da OpenGL
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -100,7 +119,7 @@ int main()
 	// Criando a matriz de modelo => matriz de transforma��o do objeto em si. Precisa colocar ela no shader pq � uma informa��o que vai ser usada por ele.
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	//
-	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char
 	shader.setMat4("model", glm::value_ptr(model));
 
@@ -113,7 +132,8 @@ int main()
 	shader.setMat4("projection", glm::value_ptr(projection));
 
 	//Criando a matriz de view
-	glm::mat4 view = glm::lookAt(cameraPos, glm::vec3(0.0, 0.0, 0.0), cameraUp);
+	
+	view = glm::lookAt(cameraPos, glm::vec3(0.0, 0.0, 0.0), cameraUp);
 	shader.setMat4("view", glm::value_ptr(view));
 
 	glEnable(GL_DEPTH_TEST);
@@ -136,7 +156,8 @@ int main()
 
 		model = glm::mat4(1); 
 		float offset = cos((GLfloat)glfwGetTime());
-		//model = glm::translate(model, glm::vec3(0.0, 0.0, offset));
+		// movimenta o objeto
+		// model = glm::translate(model, glm::vec3(0.0, 0.0, offset));
 
 		if (rotateX)
 		{
@@ -156,6 +177,7 @@ int main()
 
 		// manda informa��o de model pro shader
 		shader.setMat4("model", glm::value_ptr(model));
+		// camera pos é um ponto e camera front é um vetor normalizado
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		shader.setMat4("view", glm::value_ptr(view));
 		
@@ -224,7 +246,55 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		cameraPos -= cameraSpeed * cameraFront;
 	}
+	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT)
+	{
+		cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+	}
+	if (key == GLFW_KEY_D)
+	{
+		cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+	}
 
+	// vista de frente
+	if (key == GLFW_KEY_1)
+	{
+		cameraPos = glm::vec3(0.0, 0.0, -15.0);
+		cameraFront = glm::vec3(0.0, 0.0, 1.0);
+		cameraUp = glm::vec3(0.0, 1.0, 0.0);
+		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
+	}
+	// vista de trás
+	if (key == GLFW_KEY_2)
+	{
+		cameraPos = glm::vec3(0.0, 0.0, 15.0);
+		cameraFront = glm::vec3(0.0, 0.0, -1.0);
+		cameraUp = glm::vec3(0.0, 1.0, 0.0);
+		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
+	}
+	// vista de lado (direito)
+	if (key == GLFW_KEY_3 )
+	{
+		cameraPos = glm::vec3(15.0, 0.0, 0.0);
+		cameraFront = glm::vec3(-1.0, 0.0, 0.0);
+		cameraUp = glm::vec3(0.0, 1.0, 0.0);
+		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
+	}
+	// vista de lado (esquerdo)
+	if (key == GLFW_KEY_4)
+	{
+		cameraPos = glm::vec3(-15.0, 0.0, 0.0);
+		cameraFront = glm::vec3(1.0, 0.0, 0.0);
+		cameraUp = glm::vec3(0.0, 1.0, 0.0);
+		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
+	}
+	// vista de cima
+	if (key == GLFW_KEY_5)
+	{
+		cameraPos = glm::vec3(0.0, 10.0, 0.0);
+		cameraFront = glm::vec3(0.0, -1.0, 0.0);
+		cameraUp = glm::vec3(0.0, 0.0, -1.0);
+		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
+	}
 }
 
 
@@ -246,28 +316,28 @@ int setupGeometry()
 
 		//Base do cubo: 2 tri�ngulos (violeta)
 		//x    y    z    r    g    b
-		-2.0, -2.0, -2.0, 4.0, 0.0, 4.0, // v0
-		-2.0, -2.0,  2.0, 4.0, 0.0, 4.0, // v1
-		 2.0, -2.0, -2.0, 4.0, 0.0, 4.0, // v2
+		-2.0, -2.0, -2.0, 1.0, 0.0, 1.0, // v0
+		-2.0, -2.0,  2.0, 1.0, 0.0, 1.0, // v1
+		 2.0, -2.0, -2.0, 1.0, 0.0, 1.0, // v2
 
-		 -2.0, -2.0, 2.0, 4.0, 0.0, 4.0, //v3
-		  2.0, -2.0, 2.0, 4.0, 0.0, 4.0, //v4 
-		  2.0, -2.0,-2.0, 4.0, 0.0, 4.0, //v5
+		 -2.0, -2.0, 2.0, 1.0, 0.0, 1.0, //v3
+		  2.0, -2.0, 2.0, 1.0, 0.0, 1.0, //v4 
+		  2.0, -2.0,-2.0, 1.0, 0.0, 1.0, //v5
 
 		  //Parte superior do cubo: 2 tri�ngulos (verde)
 		//x    y    z    r    g    b
-		-2.0, 2.0, -2.0, 0.0, 2.0, 0.0, // v6
-		-2.0, 2.0,  2.0, 0.0, 2.0, 0.0, // v7
-		 2.0, 2.0, -2.0, 0.0, 2.0, 0.0, // v8
+		-2.0, 2.0, -2.0, 0.0, 1.0, 0.0, // v6
+		-2.0, 2.0,  2.0, 0.0, 1.0, 0.0, // v7
+		 2.0, 2.0, -2.0, 0.0, 1.0, 0.0, // v8
 
-		 -2.0, 2.0, 2.0, 0.0, 2.0, 0.0, //v9
-		  2.0, 2.0, 2.0, 0.0, 2.0, 0.0, //v10 
-		  2.0, 2.0,-2.0, 0.0, 2.0, 0.0, //v11
+		 -2.0, 2.0, 2.0, 0.0, 1.0, 0.0, //v9
+		  2.0, 2.0, 2.0, 0.0, 1.0, 0.0, //v10 
+		  2.0, 2.0,-2.0, 0.0, 1.0, 0.0, //v11
 
 		  // Quadrado frontal (amarelo)
-		  -2.0, -2.0, -2.0, 4.0, 4.0, 0.0, //v12
-		   -2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v13
-		   2.0, -2.0, -2.0, 4.0, 4.0, 0.0, //v14
+		  -2.0, -2.0, -2.0, 1.0, 1.0, 0.0, //v12
+		   -2.0, 2.0, -2.0, 1.0, 1.0, 0.0, //v13
+		   2.0, -2.0, -2.0, 1.0, 1.0, 0.0, //v14
 
 		   -2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v15
 		   2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v16
@@ -292,14 +362,14 @@ int setupGeometry()
 			 -2.0, 2.0, 2.0, 4.0, 0.0, 0.0, //v28
 			 -2.0, -2.0, 2.0, 4.0, 0.0, 0.0, //v29
 
-		  // Quadrado traseiro (laranja)
-		 -2.0, -2.0, 2.0, 4.0, 2.0, 0.0, //v30
-		 -2.0, 2.0, 2.0, 4.0, 2.0, 0.0, //v31
-		  2.0, -2.0, 2.0, 4.0, 2.0, 0.0, //v32
+		  // Quadrado traseiro (verde claro)
+		 -2.0, -2.0, 2.0, 0.8, 1.0, 0.7, //v30
+		 -2.0, 2.0, 2.0, 0.8, 1.0, 0.7, //v31
+		  2.0, -2.0, 2.0, 0.8, 1.0, 0.7, //v32
 
-		  -2.0, 2.0, 2.0, 4.0, 2.0, 0.0, //v33
-		  2.0, 2.0,  2.0, 4.0, 2.0, 0.0, //v34
-		  2.0, -2.0, 2.0, 4.0, 2.0, 0.0, //v35
+		  -2.0, 2.0, 2.0, 0.8, 1.0, 0.7, //v33
+		  2.0, 2.0,  2.0, 0.8, 1.0, 0.7, //v34
+		  2.0, -2.0, 2.0, 0.8, 1.0, 0.7, //v35
 
 		  // => Ch�o (marrom)
 		-4.0, -2.0, -4.0, 0.9, 0.5, 0.4, // v0
@@ -357,3 +427,71 @@ int setupGeometry()
 	return VAO;
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	//cout << xpos << "\t" << ypos << endl;
+
+	if (firstMouse)
+
+	{
+
+		lastX = xpos;
+
+		lastY = ypos;
+
+		firstMouse = false;
+
+	}
+
+
+
+	float xoffset = xpos - lastX;
+
+	float yoffset = lastY - ypos;
+
+	lastX = xpos;
+
+	lastY = ypos;
+
+
+
+	float sensitivity = 0.05;
+
+	xoffset *= sensitivity;
+
+	yoffset *= sensitivity;
+
+
+	yaw += xoffset;
+
+	pitch += yoffset;
+
+
+
+	if (pitch > 89.0f)
+
+		pitch = 89.0f;
+
+	if (pitch < -89.0f)
+
+		pitch = -89.0f;
+
+
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(front);
+
+
+
+	//Precisamos também atualizar o cameraUp!! Pra isso, usamos o Up do  
+
+	//mundo (y), recalculamos Right e depois o Up
+
+	glm::vec3 right = glm::normalize(glm::cross(cameraFront, glm::vec3(0.0, 1.0, 0.0)));
+
+	cameraUp = glm::normalize(glm::cross(right, cameraFront));
+
+}

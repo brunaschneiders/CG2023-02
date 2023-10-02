@@ -1,0 +1,16 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: O diretório intermediário (x64\Debug\) contém arquivos compartilhados de outro projeto (Hello3D - Pyramid.vcxproj). Isso pode levar a um comportamento incorreto de limpeza e recompilação.
+  Origem.cpp
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(281,21): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(281,31): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(282,21): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(282,31): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(283,21): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(283,31): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(285,21): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(285,31): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(286,21): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(286,31): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(287,22): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\cubo\Origem.cpp(287,32): warning C4305: 'inicializando': truncamento de 'double' para 'GLfloat'
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflita com uso de outras bibliotecas; use /NODEFAULTLIB:library
+  cubo.vcxproj -> C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\x64\Debug\cubo.exe

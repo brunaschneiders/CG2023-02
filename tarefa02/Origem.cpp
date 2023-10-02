@@ -40,7 +40,7 @@ const GLuint WIDTH = 1000, HEIGHT = 1000;
 bool rotateX=false, rotateY=false, rotateZ=false;
 
 // Variáveis de controle da câmera
-glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 15.0); // posição da camera => x, y, z
+glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 10.0); // posição da camera => x, y, z
 // vetor correspondente ao eixo de profundidade => pra frente e pra trás
 glm::vec3 cameraFront = glm::vec3(0.0, 0.0, -1.0); // z é negativo pq o z de cameraPos é positivo (precisa sempre ser o inverso)
 // eixo que apontaria pra cima em relação à camera
@@ -258,7 +258,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// vista de frente
 	if (key == GLFW_KEY_1)
 	{
-		cameraPos = glm::vec3(0.0, 0.0, -15.0);
+		cameraPos = glm::vec3(0.0, 0.0, -10.0);
 		cameraFront = glm::vec3(0.0, 0.0, 1.0);
 		cameraUp = glm::vec3(0.0, 1.0, 0.0);
 		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
@@ -266,7 +266,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// vista de trás
 	if (key == GLFW_KEY_2)
 	{
-		cameraPos = glm::vec3(0.0, 0.0, 15.0);
+		cameraPos = glm::vec3(0.0, 0.0, 10.0);
 		cameraFront = glm::vec3(0.0, 0.0, -1.0);
 		cameraUp = glm::vec3(0.0, 1.0, 0.0);
 		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
@@ -274,7 +274,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// vista de lado (direito)
 	if (key == GLFW_KEY_3 )
 	{
-		cameraPos = glm::vec3(15.0, 0.0, 0.0);
+		cameraPos = glm::vec3(10.0, 0.0, 0.0);
 		cameraFront = glm::vec3(-1.0, 0.0, 0.0);
 		cameraUp = glm::vec3(0.0, 1.0, 0.0);
 		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
@@ -282,7 +282,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// vista de lado (esquerdo)
 	if (key == GLFW_KEY_4)
 	{
-		cameraPos = glm::vec3(-15.0, 0.0, 0.0);
+		cameraPos = glm::vec3(-10.0, 0.0, 0.0);
 		cameraFront = glm::vec3(1.0, 0.0, 0.0);
 		cameraUp = glm::vec3(0.0, 1.0, 0.0);
 		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
@@ -316,69 +316,69 @@ int setupGeometry()
 
 		//Base do cubo: 2 tri�ngulos (violeta)
 		//x    y    z    r    g    b
-		-2.0, -2.0, -2.0, 1.0, 0.0, 1.0, // v0
-		-2.0, -2.0,  2.0, 1.0, 0.0, 1.0, // v1
-		 2.0, -2.0, -2.0, 1.0, 0.0, 1.0, // v2
+		-0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // v0
+		-0.5, -0.5,  0.5, 1.0, 0.0, 1.0, // v1
+		 0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // v2
 
-		 -2.0, -2.0, 2.0, 1.0, 0.0, 1.0, //v3
-		  2.0, -2.0, 2.0, 1.0, 0.0, 1.0, //v4 
-		  2.0, -2.0,-2.0, 1.0, 0.0, 1.0, //v5
+		 -0.5, -0.5, 0.5, 1.0, 0.0, 1.0, //v3
+		  0.5, -0.5, 0.5, 1.0, 0.0, 1.0, //v4 
+		  0.5, -0.5,-0.5, 1.0, 0.0, 1.0, //v5
 
 		  //Parte superior do cubo: 2 tri�ngulos (verde)
 		//x    y    z    r    g    b
-		-2.0, 2.0, -2.0, 0.0, 1.0, 0.0, // v6
-		-2.0, 2.0,  2.0, 0.0, 1.0, 0.0, // v7
-		 2.0, 2.0, -2.0, 0.0, 1.0, 0.0, // v8
+		-0.5, 0.5, -0.5, 0.0, 1.0, 0.0, // v6
+		-0.5, 0.5,  0.5, 0.0, 1.0, 0.0, // v7
+		 0.5, 0.5, -0.5, 0.0, 1.0, 0.0, // v8
 
-		 -2.0, 2.0, 2.0, 0.0, 1.0, 0.0, //v9
-		  2.0, 2.0, 2.0, 0.0, 1.0, 0.0, //v10 
-		  2.0, 2.0,-2.0, 0.0, 1.0, 0.0, //v11
+		 -0.5, 0.5, 0.5, 0.0, 1.0, 0.0, //v9
+		  0.5, 0.5, 0.5, 0.0, 1.0, 0.0, //v10 
+		  0.5, 0.5,-0.5, 0.0, 1.0, 0.0, //v11
 
 		  // Quadrado frontal (amarelo)
-		  -2.0, -2.0, -2.0, 1.0, 1.0, 0.0, //v12
-		   -2.0, 2.0, -2.0, 1.0, 1.0, 0.0, //v13
-		   2.0, -2.0, -2.0, 1.0, 1.0, 0.0, //v14
+		  -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v12
+		   -0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v13
+		   0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v14
 
-		   -2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v15
-		   2.0, 2.0, -2.0, 4.0, 4.0, 0.0, //v16
-		   2.0, -2.0, -2.0, 4.0, 4.0, 0.0, //v17
+		   -0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v15
+		   0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v16
+		   0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v17
 
 		   // Quadrado lateral direito (azul)
-		   2.0, -2.0, -2.0, 0.0, 4.0, 4.0, //v18
-		   2.0, 2.0, -2.0, 0.0, 4.0, 4.0, //v19
-		   2.0, -2.0, 2.0, 0.0, 4.0, 4.0, //v20
+		   0.5, -0.5, -0.5, 0.0, 1.0, 1.0, //v18
+		   0.5, 0.5, -0.5, 0.0, 1.0, 1.0, //v19
+		   0.5, -0.5, 0.5, 0.0, 1.0, 1.0, //v20
 
-		   2.0, 2.0, -2.0, 0.0, 4.0, 4.0, //v21
-		   2.0, 2.0, 2.0, 0.0, 4.0, 4.0, //v22
-		   2.0, -2.0, 2.0, 0.0, 4.0, 4.0, //v23
+		   0.5, 0.5, -0.5, 0.0, 1.0, 1.0, //v21
+		   0.5, 0.5, 0.5, 0.0, 1.0, 1.0, //v22
+		   0.5, -0.5, 0.5, 0.0, 1.0, 1.0, //v23
 
 		   // Quadrado lateral esquerdo (vermelho)
 
-			-2.0, -2.0, -2.0, 4.0, 0.0, 0.0, // v24
-			-2.0, 2.0, -2.0, 4.0, 0.0, 0.0, // v25
-			-2.0, -2.0, 2.0, 4.0, 0.0, 0.0, // v26
+			-0.5, -0.5, -0.5, 1.0, 0.0, 0.0, // v24
+			-0.5, 0.5, -0.5, 1.0, 0.0, 0.0, // v25
+			-0.5, -0.5, 0.5, 1.0, 0.0, 0.0, // v26
 
-			 -2.0, 2.0, -2.0, 4.0, 0.0, 0.0, //v27
-			 -2.0, 2.0, 2.0, 4.0, 0.0, 0.0, //v28
-			 -2.0, -2.0, 2.0, 4.0, 0.0, 0.0, //v29
+			 -0.5, 0.5, -0.5, 1.0, 0.0, 0.0, //v27
+			 -0.5, 0.5, 0.5, 1.0, 0.0, 0.0, //v28
+			 -0.5, -0.5, 0.5, 1.0, 0.0, 0.0, //v29
 
 		  // Quadrado traseiro (verde claro)
-		 -2.0, -2.0, 2.0, 0.8, 1.0, 0.7, //v30
-		 -2.0, 2.0, 2.0, 0.8, 1.0, 0.7, //v31
-		  2.0, -2.0, 2.0, 0.8, 1.0, 0.7, //v32
+		 -0.5, -0.5, 0.5, 0.8, 1.0, 0.7, //v30
+		 -0.5, 0.5, 0.5, 0.8, 1.0, 0.7, //v31
+		  0.5, -0.5, 0.5, 0.8, 1.0, 0.7, //v32
 
-		  -2.0, 2.0, 2.0, 0.8, 1.0, 0.7, //v33
-		  2.0, 2.0,  2.0, 0.8, 1.0, 0.7, //v34
-		  2.0, -2.0, 2.0, 0.8, 1.0, 0.7, //v35
+		  -0.5, 0.5, 0.5, 0.8, 1.0, 0.7, //v33
+		  0.5, 0.5,  0.5, 0.8, 1.0, 0.7, //v34
+		  0.5, -0.5, 0.5, 0.8, 1.0, 0.7, //v35
 
 		  // => Ch�o (marrom)
-		-4.0, -2.0, -4.0, 0.9, 0.5, 0.4, // v0
-		-4.0, -2.0,  4.0, 0.9, 0.5, 0.4, // v1
-		 4.0, -2.0, -4.0, 0.9, 0.5, 0.4, // v2
+		-2.0, -0.5, -2.0, 0.9, 0.5, 0.4, // v0
+		-2.0, -0.5,  2.0, 0.9, 0.5, 0.4, // v1
+		 2.0, -0.5, -2.0, 0.9, 0.5, 0.4, // v2
 
-		 -4.0, -2.0, 4.0, 0.9, 0.5, 0.4, //v3
-		  4.0, -2.0, 4.0, 0.9, 0.5, 0.4, //v4 
-		  4.0, -2.0, -4.0, 0.9, 0.5, 0.4, //v5
+		 -2.0, -0.5, 2.0, 0.9, 0.5, 0.4, //v3
+		  2.0, -0.5, 2.0, 0.9, 0.5, 0.4, //v4 
+		  2.0, -0.5, -2.0, 0.9, 0.5, 0.4, //v5
 	};
 
 	GLuint VBO, VAO;

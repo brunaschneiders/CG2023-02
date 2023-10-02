@@ -29,7 +29,7 @@ using namespace std;
 
 // Prot�tipo da fun��o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+//void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // Prot�tipos das fun��es
 int setupGeometry();
@@ -83,7 +83,7 @@ int main()
 	glfwSetKeyCallback(window, key_callback);
 
 	// Fazendo o registro da função mouse_callback  para a janela GLFW
-	glfwSetCursorPosCallback(window, mouse_callback);
+	//glfwSetCursorPosCallback(window, mouse_callback);
 
 	// seta a posição do mouse para começar no meio da tela
 	glfwSetCursorPos(window, WIDTH / 2, HEIGHT / 2);
@@ -427,71 +427,3 @@ int setupGeometry()
 	return VAO;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	//cout << xpos << "\t" << ypos << endl;
-
-	if (firstMouse)
-
-	{
-
-		lastX = xpos;
-
-		lastY = ypos;
-
-		firstMouse = false;
-
-	}
-
-
-
-	float xoffset = xpos - lastX;
-
-	float yoffset = lastY - ypos;
-
-	lastX = xpos;
-
-	lastY = ypos;
-
-
-
-	float sensitivity = 0.05;
-
-	xoffset *= sensitivity;
-
-	yoffset *= sensitivity;
-
-
-	yaw += xoffset;
-
-	pitch += yoffset;
-
-
-
-	if (pitch > 89.0f)
-
-		pitch = 89.0f;
-
-	if (pitch < -89.0f)
-
-		pitch = -89.0f;
-
-
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(front);
-
-
-
-	//Precisamos também atualizar o cameraUp!! Pra isso, usamos o Up do  
-
-	//mundo (y), recalculamos Right e depois o Up
-
-	glm::vec3 right = glm::normalize(glm::cross(cameraFront, glm::vec3(0.0, 1.0, 0.0)));
-
-	cameraUp = glm::normalize(glm::cross(right, cameraFront));
-
-}

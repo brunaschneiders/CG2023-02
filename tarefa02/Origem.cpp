@@ -232,12 +232,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_S) camera.moveBackward();
 	if (key == GLFW_KEY_A) camera.moveLeft();
 	if (key == GLFW_KEY_D) camera.moveRight();
+	if (key == GLFW_KEY_Q) camera.moveUp();
 
-	if (key == GLFW_KEY_1) rotateChar = '1';
-	if (key == GLFW_KEY_2) rotateChar = '2';
-	if (key == GLFW_KEY_3 ) rotateChar = '3';
-	if (key == GLFW_KEY_4) rotateChar = '4';
-	if (key == GLFW_KEY_5) rotateChar = '5';
+	if (key == GLFW_KEY_1) camera.viewFront();
+	if (key == GLFW_KEY_2) camera.viewRight();
+	if (key == GLFW_KEY_3 ) camera.viewBack();
+	if (key == GLFW_KEY_4) camera.viewLeft();
+	if (key == GLFW_KEY_5) camera.viewTop();
 }
 
 

@@ -102,3 +102,33 @@ void Camera::moveUp()
 	cameraPos += glm::vec3(0.0, 1 * sensitivity, 0.0);
 	view = view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }
+
+void Camera::viewTop()
+{
+	cameraPos = glm::vec3(0.0, 10.0, 0.0);
+	cameraFront = glm::vec3(0.0, -1.0, 0.0);
+}
+
+void Camera::viewFront()
+{
+	cameraPos = glm::vec3(0.0, 0.0, -10.0);
+	cameraFront = glm::vec3(0.0, 0.0, 1.0);
+}
+
+void Camera::viewBack()
+{
+	cameraPos = glm::vec3(0.0, 0.0, 10.0);
+	cameraFront = glm::vec3(0.0, 0.0, -1.0);
+}
+
+void Camera::viewLeft()
+{
+	cameraPos = glm::vec3(-10.0, 0.0, 0.0);
+	cameraFront = glm::vec3(1.0, 0.0, 0.0);
+}
+
+void Camera::viewRight()
+{
+	cameraPos = glm::vec3(10.0, 0.0, 0.0);
+	cameraFront = glm::vec3(-1.0, 0.0, 0.0);
+}

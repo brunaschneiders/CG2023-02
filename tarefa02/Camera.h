@@ -20,6 +20,11 @@ public:
     void moveLeft();
     void moveRight();
     void moveUp();
+	void viewFront();
+	void viewBack();
+	void viewLeft();
+	void viewRight();
+	void viewTop();
 
 	bool firstMouse;
 	float sensitivity;

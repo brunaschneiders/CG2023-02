@@ -29,15 +29,13 @@ using namespace std;
 
 // Prot�tipo da fun��o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-//void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // Prot�tipos das fun��es
 int setupGeometry();
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
-
-bool rotateX=false, rotateY=false, rotateZ=false;
 
 // Variáveis de controle da câmera
 glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 10.0); // posição da camera => x, y, z
@@ -49,6 +47,7 @@ glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0); // eixo y
 // cameraRight é calculado pelo prosproduct do cameraFront e cameraUp versus taxa do cameraSpeed
 // glm::vec3 cameraRight =
 
+char rotateChar;
 glm::mat4 view = glm::mat4(1);
 bool firstMouse = true;
 float lastX = WIDTH / 2.0, lastY = HEIGHT / 2.0; //para calcular o quanto que o mouse deslocou​
@@ -83,7 +82,7 @@ int main()
 	glfwSetKeyCallback(window, key_callback);
 
 	// Fazendo o registro da função mouse_callback  para a janela GLFW
-	//glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	// seta a posição do mouse para começar no meio da tela
 	glfwSetCursorPos(window, WIDTH / 2, HEIGHT / 2);
@@ -159,20 +158,53 @@ int main()
 		// movimenta o objeto
 		// model = glm::translate(model, glm::vec3(0.0, 0.0, offset));
 
-		if (rotateX)
-		{
+		switch (rotateChar) {
+		case 'x':
 			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-			
-		}
-		else if (rotateY)
-		{
+			break;
+
+		case 'y':
 			model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+			break;
 
-		}
-		else if (rotateZ)
-		{
+		case 'z':
 			model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+			break;
 
+		// vista de frente
+		case '1':
+			cameraPos = glm::vec3(0.0, 0.0, -10.0);
+			cameraFront = glm::vec3(0.0, 0.0, 1.0);
+
+			break;
+
+		// vista de trás
+		case '2':
+			cameraPos = glm::vec3(0.0, 0.0, 10.0);
+			cameraFront = glm::vec3(0.0, 0.0, -1.0);
+
+			break;
+
+		//  vista de lado (direito)
+		case '3':
+			cameraPos = glm::vec3(10.0, 0.0, 0.0);
+			cameraFront = glm::vec3(-1.0, 0.0, 0.0);
+
+			break;
+		
+	    // vista de lado (esquerdo)
+		case '4':
+			cameraPos = glm::vec3(-10.0, 0.0, 0.0);
+			cameraFront = glm::vec3(1.0, 0.0, 0.0);
+
+			break;
+
+		// vista de cima
+		case '5':
+			cameraPos = glm::vec3(0.0, 10.0, 0.0);
+			cameraFront = glm::vec3(0.0, -1.0, 0.0);
+
+			break;
 		}
 
 		// manda informa��o de model pro shader
@@ -215,86 +247,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
-	{
-		rotateX = true;
-		rotateY = false;
-		rotateZ = false;
-	}
-
-	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-	{
-		rotateX = false;
-		rotateY = true;
-		rotateZ = false;
-	}
-
-	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-	{
-		rotateX = false;
-		rotateY = false;
-		rotateZ = true;
-	}
+	if (key == GLFW_KEY_X && action == GLFW_PRESS) rotateChar = 'x';
+	if (key == GLFW_KEY_Y && action == GLFW_PRESS) rotateChar = 'y';
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS) rotateChar = 'z';
 
 	float cameraSpeed = 0.1;
 
-	if (key == GLFW_KEY_W)
-	{
-		cameraPos += cameraSpeed * cameraFront;
-	}
-	if (key == GLFW_KEY_S)
-	{
-		cameraPos -= cameraSpeed * cameraFront;
-	}
-	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT)
-	{
-		cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
-	}
-	if (key == GLFW_KEY_D)
-	{
-		cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
-	}
+	if (key == GLFW_KEY_W) cameraPos += cameraSpeed * cameraFront;
+	if (key == GLFW_KEY_S) cameraPos -= cameraSpeed * cameraFront;
+	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT) cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+	if (key == GLFW_KEY_D) cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
 
-	// vista de frente
-	if (key == GLFW_KEY_1)
-	{
-		cameraPos = glm::vec3(0.0, 0.0, -10.0);
-		cameraFront = glm::vec3(0.0, 0.0, 1.0);
-		cameraUp = glm::vec3(0.0, 1.0, 0.0);
-		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
-	}
-	// vista de trás
-	if (key == GLFW_KEY_2)
-	{
-		cameraPos = glm::vec3(0.0, 0.0, 10.0);
-		cameraFront = glm::vec3(0.0, 0.0, -1.0);
-		cameraUp = glm::vec3(0.0, 1.0, 0.0);
-		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
-	}
-	// vista de lado (direito)
-	if (key == GLFW_KEY_3 )
-	{
-		cameraPos = glm::vec3(10.0, 0.0, 0.0);
-		cameraFront = glm::vec3(-1.0, 0.0, 0.0);
-		cameraUp = glm::vec3(0.0, 1.0, 0.0);
-		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
-	}
-	// vista de lado (esquerdo)
-	if (key == GLFW_KEY_4)
-	{
-		cameraPos = glm::vec3(-10.0, 0.0, 0.0);
-		cameraFront = glm::vec3(1.0, 0.0, 0.0);
-		cameraUp = glm::vec3(0.0, 1.0, 0.0);
-		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
-	}
-	// vista de cima
-	if (key == GLFW_KEY_5)
-	{
-		cameraPos = glm::vec3(0.0, 10.0, 0.0);
-		cameraFront = glm::vec3(0.0, -1.0, 0.0);
-		cameraUp = glm::vec3(0.0, 0.0, -1.0);
-		view = glm::lookAt(cameraPos, cameraFront, cameraUp);
-	}
+	if (key == GLFW_KEY_1) rotateChar = '1';
+	if (key == GLFW_KEY_2) rotateChar = '2';
+	if (key == GLFW_KEY_3 ) rotateChar = '3';
+	if (key == GLFW_KEY_4) rotateChar = '4';
+	if (key == GLFW_KEY_5) rotateChar = '5';
 }
 
 
@@ -334,7 +302,7 @@ int setupGeometry()
 		  0.5, 0.5, 0.5, 0.0, 1.0, 0.0, //v10 
 		  0.5, 0.5,-0.5, 0.0, 1.0, 0.0, //v11
 
-		  // Quadrado frontal (amarelo)
+		  // Quadrado frontal (verde claro)
 		  -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v12
 		   -0.5, 0.5, -0.5, 1.0, 1.0, 0.0, //v13
 		   0.5, -0.5, -0.5, 1.0, 1.0, 0.0, //v14
@@ -362,7 +330,7 @@ int setupGeometry()
 			 -0.5, 0.5, 0.5, 1.0, 0.0, 0.0, //v28
 			 -0.5, -0.5, 0.5, 1.0, 0.0, 0.0, //v29
 
-		  // Quadrado traseiro (verde claro)
+		  // Quadrado traseiro (amarelo)
 		 -0.5, -0.5, 0.5, 0.8, 1.0, 0.7, //v30
 		 -0.5, 0.5, 0.5, 0.8, 1.0, 0.7, //v31
 		  0.5, -0.5, 0.5, 0.8, 1.0, 0.7, //v32
@@ -427,3 +395,55 @@ int setupGeometry()
 	return VAO;
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	//cout << xpos << "\t" << ypos << endl;
+
+	if (firstMouse)
+
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+
+
+	float sensitivity = 0.05;
+
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(front);
+
+	//Precisamos também atualizar o cameraUp!! Pra isso, usamos o Up do  
+	//mundo (y), recalculamos Right e depois o Up
+
+	glm::vec3 right = glm::normalize(glm::cross(cameraFront, glm::vec3(0.0, 1.0, 0.0)));
+	cameraUp = glm::normalize(glm::cross(right, cameraFront));
+}

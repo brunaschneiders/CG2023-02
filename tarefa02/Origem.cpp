@@ -25,9 +25,10 @@ using namespace std;
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
+#include "Camera.h"
 
 
-// Prot�tipo da fun��o de callback de teclado
+// Configuracao da window
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
@@ -37,25 +38,10 @@ int setupGeometry();
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
 
-// Variáveis de controle da câmera
-glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 10.0); // posição da camera => x, y, z
-// vetor correspondente ao eixo de profundidade => pra frente e pra trás
-glm::vec3 cameraFront = glm::vec3(0.0, 0.0, -1.0); // z é negativo pq o z de cameraPos é positivo (precisa sempre ser o inverso)
-// eixo que apontaria pra cima em relação à camera
-glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0); // eixo y
-// direita e esquerda à partir da camera. Ñ precisa armazenar, usamos só no momento de mover a camera pra direita ou esquerda, calculando no momento que a tecla é pressionada
-// cameraRight é calculado pelo prosproduct do cameraFront e cameraUp versus taxa do cameraSpeed
-// glm::vec3 cameraRight =
+Camera camera;
 
 char rotateChar;
-glm::mat4 view = glm::mat4(1);
-bool firstMouse = true;
-float lastX = WIDTH / 2.0, lastY = HEIGHT / 2.0; //para calcular o quanto que o mouse deslocou​
-float yaw = -90.0, pitch = 0.0; //rotação em x e y​
 
-// Sugestão: desabilitar cursor do sistema operacional
-
-// Fun��o MAIN
 int main()
 {
 	// Inicializa��o da GLFW
@@ -119,21 +105,11 @@ int main()
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	//
 	//model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char
+	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char.
+	// lá ela é multiplicada ela pela matriz que tem as transformações do objeto (model) e pela coordenada do vértice
 	shader.setMat4("model", glm::value_ptr(model));
 
-	//Criando a matriz de proje��o
-	glm::mat4 projection = glm::mat4(1); //matriz identidade;
-	// projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0); // x min, x max, y min, y max, z min, z max. z min deve ser negativo e z max, positivo. Como o plano de projeção fica no v0, o valor de z não é muito relevante, já que ele trata da distância do observador e na projeção ortográfica isso não é relevante (independente da distancia, a visualização fica igual).
-	projection = glm::perspective(glm::radians(40.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f); // FOV, aspecto ratio, z-near, z-far
-	// envia a matriz de model pro shader e lá ela é multiplicada ela pela matriz que tem as transformações do objeto (model) e pela coordenada do vértice
-	// se não criamos essa projeção, o openGl preenche como se fosse uma projeção paralela (ortográfica) cujo tamanho do volume de visualização forma um cubo.
-	shader.setMat4("projection", glm::value_ptr(projection));
-
-	//Criando a matriz de view
-	
-	view = glm::lookAt(cameraPos, glm::vec3(0.0, 0.0, 0.0), cameraUp);
-	shader.setMat4("view", glm::value_ptr(view));
+	camera.initialize(&shader, WIDTH, HEIGHT);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -172,46 +148,45 @@ int main()
 			break;
 
 		// vista de frente
-		case '1':
-			cameraPos = glm::vec3(0.0, 0.0, -10.0);
-			cameraFront = glm::vec3(0.0, 0.0, 1.0);
+		// case '1':
+		// 	cameraPos = glm::vec3(0.0, 0.0, -10.0);
+		// 	cameraFront = glm::vec3(0.0, 0.0, 1.0);
 
-			break;
+		// 	break;
 
-		// vista de trás
-		case '2':
-			cameraPos = glm::vec3(0.0, 0.0, 10.0);
-			cameraFront = glm::vec3(0.0, 0.0, -1.0);
+		// // vista de trás
+		// case '2':
+		// 	cameraPos = glm::vec3(0.0, 0.0, 10.0);
+		// 	cameraFront = glm::vec3(0.0, 0.0, -1.0);
 
-			break;
+		// 	break;
 
-		//  vista de lado (direito)
-		case '3':
-			cameraPos = glm::vec3(10.0, 0.0, 0.0);
-			cameraFront = glm::vec3(-1.0, 0.0, 0.0);
+		// //  vista de lado (direito)
+		// case '3':
+		// 	cameraPos = glm::vec3(10.0, 0.0, 0.0);
+		// 	cameraFront = glm::vec3(-1.0, 0.0, 0.0);
 
-			break;
+		// 	break;
 		
-	    // vista de lado (esquerdo)
-		case '4':
-			cameraPos = glm::vec3(-10.0, 0.0, 0.0);
-			cameraFront = glm::vec3(1.0, 0.0, 0.0);
+	    // // vista de lado (esquerdo)
+		// case '4':
+		// 	cameraPos = glm::vec3(-10.0, 0.0, 0.0);
+		// 	cameraFront = glm::vec3(1.0, 0.0, 0.0);
 
-			break;
+		// 	break;
 
-		// vista de cima
-		case '5':
-			cameraPos = glm::vec3(0.0, 10.0, 0.0);
-			cameraFront = glm::vec3(0.0, -1.0, 0.0);
+		// // vista de cima
+		// case '5':
+		// 	cameraPos = glm::vec3(0.0, 10.0, 0.0);
+		// 	cameraFront = glm::vec3(0.0, -1.0, 0.0);
 
-			break;
+		// 	break;
 		}
 
 		// manda informa��o de model pro shader
 		shader.setMat4("model", glm::value_ptr(model));
-		// camera pos é um ponto e camera front é um vetor normalizado
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		shader.setMat4("view", glm::value_ptr(view));
+
+		camera.update();
 		
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
@@ -253,10 +228,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	float cameraSpeed = 0.1;
 
-	if (key == GLFW_KEY_W) cameraPos += cameraSpeed * cameraFront;
-	if (key == GLFW_KEY_S) cameraPos -= cameraSpeed * cameraFront;
-	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT) cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
-	if (key == GLFW_KEY_D) cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+	if (key == GLFW_KEY_W) camera.moveForward();
+	if (key == GLFW_KEY_S) camera.moveBackward();
+	if (key == GLFW_KEY_A) camera.moveLeft();
+	if (key == GLFW_KEY_D) camera.moveRight();
 
 	if (key == GLFW_KEY_1) rotateChar = '1';
 	if (key == GLFW_KEY_2) rotateChar = '2';
@@ -397,53 +372,5 @@ int setupGeometry()
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	//cout << xpos << "\t" << ypos << endl;
-
-	if (firstMouse)
-
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-
-
-	float sensitivity = 0.05;
-
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(front);
-
-	//Precisamos também atualizar o cameraUp!! Pra isso, usamos o Up do  
-	//mundo (y), recalculamos Right e depois o Up
-
-	glm::vec3 right = glm::normalize(glm::cross(cameraFront, glm::vec3(0.0, 1.0, 0.0)));
-	cameraUp = glm::normalize(glm::cross(right, cameraFront));
+	camera.mouseMovement(window, xpos, ypos);
 }

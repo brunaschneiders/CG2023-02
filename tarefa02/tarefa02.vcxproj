@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\glad.c" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Origem.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -100,7 +100,7 @@ void Camera::moveRight()
 void Camera::moveUp()
 {
 	cameraPos += glm::vec3(0.0, 1 * sensitivity, 0.0);
-	view = view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }
 
 void Camera::viewTop()

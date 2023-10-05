@@ -1,12 +1,3 @@
-/* Hello Triangle - c�digo adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle
- *
- * Adaptado por Rossana Baptista Queiroz
- * para a disciplina de Processamento Gr�fico/Computa��o Gr�fica - Unisinos
- * Vers�o inicial: 7/4/2017
- * �ltima atualiza��o em 09/08/2023
- *
- */
-
 #include <iostream>
 #include <string>
 #include <assert.h>
@@ -39,26 +30,12 @@ int setupGeometry();
 const GLuint WIDTH = 1000, HEIGHT = 1000;
 
 Camera camera;
-
 char rotateChar;
 
 int main()
 {
 	// Inicializa��o da GLFW
 	glfwInit();
-
-	//Muita aten��o aqui: alguns ambientes n�o aceitam essas configura��es
-	//Voc� deve adaptar para a vers�o do OpenGL suportada por sua placa
-	//Sugest�o: comente essas linhas de c�digo para desobrir a vers�o e
-	//depois atualize (por exemplo: 4.5 com 4 e 5)
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	//Essencial para computadores da Apple
-//#ifdef __APPLE__
-//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//#endif
 
 	// Cria��o da janela GLFW
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Cubo com movimentação da camera!", nullptr, nullptr);
@@ -109,9 +86,10 @@ int main()
 	// lá ela é multiplicada ela pela matriz que tem as transformações do objeto (model) e pela coordenada do vértice
 	shader.setMat4("model", glm::value_ptr(model));
 
-	camera.initialize(&shader, WIDTH, HEIGHT);
 
 	glEnable(GL_DEPTH_TEST);
+
+	camera.initialize(&shader, WIDTH, HEIGHT);
 
 
 	// Loop da aplica��o - "game loop"
@@ -130,10 +108,8 @@ int main()
 		float angle = (GLfloat)glfwGetTime();
 
 		model = glm::mat4(1); 
-		float offset = cos((GLfloat)glfwGetTime());
-		// movimenta o objeto
-		// model = glm::translate(model, glm::vec3(0.0, 0.0, offset));
 
+		// movimenta o objeto
 		switch (rotateChar) {
 		case 'x':
 			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -146,41 +122,6 @@ int main()
 		case 'z':
 			model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 			break;
-
-		// vista de frente
-		// case '1':
-		// 	cameraPos = glm::vec3(0.0, 0.0, -10.0);
-		// 	cameraFront = glm::vec3(0.0, 0.0, 1.0);
-
-		// 	break;
-
-		// // vista de trás
-		// case '2':
-		// 	cameraPos = glm::vec3(0.0, 0.0, 10.0);
-		// 	cameraFront = glm::vec3(0.0, 0.0, -1.0);
-
-		// 	break;
-
-		// //  vista de lado (direito)
-		// case '3':
-		// 	cameraPos = glm::vec3(10.0, 0.0, 0.0);
-		// 	cameraFront = glm::vec3(-1.0, 0.0, 0.0);
-
-		// 	break;
-		
-	    // // vista de lado (esquerdo)
-		// case '4':
-		// 	cameraPos = glm::vec3(-10.0, 0.0, 0.0);
-		// 	cameraFront = glm::vec3(1.0, 0.0, 0.0);
-
-		// 	break;
-
-		// // vista de cima
-		// case '5':
-		// 	cameraPos = glm::vec3(0.0, 10.0, 0.0);
-		// 	cameraFront = glm::vec3(0.0, -1.0, 0.0);
-
-		// 	break;
 		}
 
 		// manda informa��o de model pro shader
@@ -190,9 +131,7 @@ int main()
 		
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
-		// necessarios dar um bind no VAO antes de desenhar os triangulos de cada geometria.
-
-
+		// necessario dar um bind no VAO antes de desenhar os triangulos de cada geometria.
 		glBindVertexArray(VAO);
 	    // desenha os triangulos. No caso da primitiva GL_TRIANGLES, a cada 3 v�rices, ele fecha um tri�ngulo v�lido.
 		glDrawArrays(GL_TRIANGLES, 0, 42);
@@ -225,8 +164,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_X && action == GLFW_PRESS) rotateChar = 'x';
 	if (key == GLFW_KEY_Y && action == GLFW_PRESS) rotateChar = 'y';
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS) rotateChar = 'z';
-
-	float cameraSpeed = 0.1;
 
 	if (key == GLFW_KEY_W) camera.moveForward();
 	if (key == GLFW_KEY_S) camera.moveBackward();

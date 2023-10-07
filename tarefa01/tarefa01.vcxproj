@@ -128,12 +128,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\tarefa01\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\tarefa01\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -145,14 +145,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\tarefa01\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\Common\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\cubo\tarefa01\shaders;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\glm;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\GLAD\include;C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-2\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\bruna\OneDrive\Documentos\UNISINOS\6_semestre\computacao_grafica\CG2023-02\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

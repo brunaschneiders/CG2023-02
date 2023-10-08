@@ -19,6 +19,7 @@ using namespace std;
 
 #include "Shader.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 
 // Configuracao da window
@@ -40,7 +41,7 @@ int main()
 	glfwInit();
 
 	// Cria��o da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Trabalho GA!", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Trabalho GA - Visualizador 3D!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da fun��o de callback para a janela GLFW
@@ -81,13 +82,9 @@ int main()
 
 	glUseProgram(shader.ID);
 
-	// Criando a matriz de modelo => matriz de transforma��o do objeto em si. Precisa colocar ela no shader pq � uma informa��o que vai ser usada por ele.
-	glm::mat4 model = glm::mat4(1); //matriz identidade;
-	//
-	//model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char.
-	// lá ela é multiplicada ela pela matriz que tem as transformações do objeto (model) e pela coordenada do vértice
-	shader.setMat4("model", glm::value_ptr(model));
+	Mesh mesh;
+
+	mesh.initialize(VAO, &shader, nVerts);
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -107,44 +104,21 @@ int main()
 
 		glLineWidth(10);
 		glPointSize(20);
-
-		float angle = (GLfloat)glfwGetTime();
-
-		model = glm::mat4(1); 
-
-		// movimenta o objeto
-		switch (rotateChar) {
-		case 'x':
-			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-			break;
-
-		case 'y':
-			model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-			break;
-
-		case 'z':
-			model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-			break;
-		}
-
-		// manda informa��o de model pro shader
-		shader.setMat4("model", glm::value_ptr(model));
+		
+ 		mesh.update(rotateChar);
+		mesh.draw();
 
 		camera.update();
-		
-		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
-		// necessario dar um bind no VAO antes de desenhar os triangulos de cada geometria.
-		glBindVertexArray(VAO);
-	    // desenha os triangulos. No caso da primitiva GL_TRIANGLES, a cada 3 v�rices, ele fecha um tri�ngulo v�lido.
-		glDrawArrays(GL_TRIANGLES, 0, nVerts);
 
-		// Chamada de desenho - drawcall
-		// CONTORNO - GL_LINE_LOOP
-		// VERTICES - GL_POINTS
+		//Ideia com a classe mesh
+		//objeto1.update();
+		//objeto1.draw();
+
+		//for ...
+			//objeto[i].update();
+			//objeto[i].draw();
 		
-		//glDrawArrays(GL_POINTS, 0, 426);
-		glBindVertexArray(0);
+		
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);

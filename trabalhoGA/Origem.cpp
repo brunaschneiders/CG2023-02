@@ -220,11 +220,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_Q) camera.moveUp();
 
 	// controla a alteração dos pontos de vista da câmera
-	if (key == GLFW_KEY_1) camera.viewFront();
-	if (key == GLFW_KEY_2) camera.viewRight();
-	if (key == GLFW_KEY_3 ) camera.viewBack();
-	if (key == GLFW_KEY_4) camera.viewLeft();
-	if (key == GLFW_KEY_5) camera.viewTop();
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) camera.viewFront();
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) camera.viewRight();
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) camera.viewBack();
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) camera.viewLeft();
+	if (key == GLFW_KEY_5 && action == GLFW_PRESS) camera.viewTop();
+
+
+	// reseta as transformações
+	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+	{
+		actionChar = NULL;
+		rotateChar = NULL;
+		translateChar = NULL;
+	}
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)

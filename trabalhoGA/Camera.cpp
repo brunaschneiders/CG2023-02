@@ -107,28 +107,33 @@ void Camera::viewTop()
 {
 	cameraPos = glm::vec3(0.0, 10.0, 0.0);
 	cameraFront = glm::vec3(0.0, -1.0, 0.0);
+	cameraUp = glm::vec3(-1.0f, 0.0f, 0.0f);
 }
 
 void Camera::viewFront()
 {
-	cameraPos = glm::vec3(0.0, 0.0, -10.0);
-	cameraFront = glm::vec3(0.0, 0.0, 1.0);
+	cameraPos = glm::vec3(0.0, 0.0, 10.0);
+	cameraFront = glm::vec3(0.0, 0.0, -1.0);
+	cameraUp = glm::vec3(0.0, 1.0, 0.0);
 }
 
 void Camera::viewBack()
 {
-	cameraPos = glm::vec3(0.0, 0.0, 10.0);
-	cameraFront = glm::vec3(0.0, 0.0, -1.0);
+	cameraPos = glm::vec3(0.0, 0.0, -10.0);
+	cameraFront = glm::vec3(0.0, 0.0, 1.0);
+	cameraUp = glm::vec3(0.0, 1.0, 0.0);
 }
 
 void Camera::viewLeft()
 {
 	cameraPos = glm::vec3(-10.0, 0.0, 0.0);
 	cameraFront = glm::vec3(1.0, 0.0, 0.0);
+	cameraUp = glm::vec3(0.0, 1.0, 0.0);
 }
 
 void Camera::viewRight()
 {
 	cameraPos = glm::vec3(10.0, 0.0, 0.0);
 	cameraFront = glm::vec3(-1.0, 0.0, 0.0);
+	cameraUp = glm::vec3(0.0, 1.0, 0.0);
 }

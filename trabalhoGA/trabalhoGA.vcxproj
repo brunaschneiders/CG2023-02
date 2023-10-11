@@ -27,6 +27,10 @@
   <ItemGroup>
     <ClInclude Include="Mesh.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\objectsView.fs" />
+    <None Include="shaders\objectsView.vs" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

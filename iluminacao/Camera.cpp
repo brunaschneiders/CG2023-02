@@ -22,12 +22,23 @@ void Camera::initialize(Shader* shader, int width, int height)
 	// Criando a matriz de projecao
 	projection = glm::perspective(glm::radians(45.0f), (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
 	shader->setMat4("projection", glm::value_ptr(projection));
+
+	// criando as informações de iluminação
+	shader->setFloat("ka", 0.2);
+	shader->setFloat("kd", 0.7);
+	shader->setFloat("ks", 0.9);
+	shader->setFloat("q", 100.0);
+	shader->setVec3("lightColor", 1.0, 1.0, 1.0);
+	shader->setVec3("lightPos", 1.0, 5.0, 2.0);
+	shader->setVec3("cameraPos", cameraPos.x, cameraPos.y, cameraPos.z);
 }
 
 void Camera::update()
 {
 	glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	shader->setMat4("view", glm::value_ptr(view));
+
+	shader->setVec3("cameraPos", cameraPos.x, cameraPos.y, cameraPos.z);
 }
 
 void Camera::mouseMovement(GLFWwindow* window, double xpos, double ypos)

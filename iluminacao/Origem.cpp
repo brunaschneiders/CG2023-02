@@ -46,11 +46,12 @@ char rotateChar;
 char translateChar;
 
 std::vector<std::string> objFilesPath = {
+//	"../3DModels/Cube/cube.obj",
 	"../3DModels/Suzannes/suzanneTriLowPoly.obj",
-	"../3DModels/NaveET/NaveET.obj",
-	"../3DModels/Classic-NoTexture/bunny.obj",
-	"../3DModels/Classic-NoTexture/camel.obj",
-	"../3DModels/Classic-NoTexture/cat.obj",
+//	"../3DModels/NaveET/NaveET.obj",
+//	"../3DModels/Classic-NoTexture/bunny.obj",
+//	"../3DModels/Classic-NoTexture/camel.obj",
+//	"../3DModels/Classic-NoTexture/cat.obj",
 };
 std::vector<Mesh> objects;
 int currentObjectIndex = 0;
@@ -93,7 +94,7 @@ int main()
 	glViewport(0, 0, width, height);
 
 	// Compilando e buildando o programa de shader
-	Shader shader("./shaders/objectsView.vs", "./shaders/objectsView.fs");
+	Shader shader("./shaders/iluminacao.vs", "./shaders/iluminacao.fs");
 
 	glUseProgram(shader.ID);
 
@@ -109,6 +110,8 @@ int main()
 	};
 
 	glEnable(GL_DEPTH_TEST);
+
+	
 
 	camera.initialize(&shader, WIDTH, HEIGHT);
 
@@ -244,7 +247,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 // gera o buffer de geometria e retorna o identificador do VAO que foi gerado a partir do arquivo lido
 int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 {
-	//vector em que estaremos armazenando o buffer de geometria => é o array de floats da geometria
+	//vector em que estaremos armazenando o buffer de geometria
 	vector <GLfloat> vbuffer;
 	//vectors auxiliares na leitura    
 	vector <glm::vec3> vertices;
@@ -253,7 +256,6 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 
 	//stream de leitura de arquivo em C++    
 	ifstream inputFile;
-	// o c_str pega o array de char de dentro da string que é o que o open() espera.
 	inputFile.open(filepath.c_str());
 
 	if (inputFile.is_open())
@@ -267,14 +269,26 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 			string word;
 
 			istringstream ssline(line);
-			// word é a primeira palavra do obj
 			ssline >> word;
 			if (word == "v")
 			{
 				glm::vec3 v;
-				// posição x, y e z do vértice
 				ssline >> v.x >> v.y >> v.z;
 				vertices.push_back(v);
+			}
+			if (word == "vn")
+			{
+				glm::vec3 vn;
+				ssline >> vn.x >> vn.y >> vn.z;
+				normals.push_back(vn);
+
+			}
+			if (word == "vt")
+			{
+				glm::vec2 vt;
+				ssline >> vt.s >> vt.t;
+				texcoords.push_back(vt);
+
 			}
 			if (word == "f")
 			{
@@ -284,18 +298,33 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 				{
 					int pos = tokens[i].find("/");
 					string token = tokens[i].substr(0, pos);
-
-					// o -1 é pq no arquivo obj é considerado o indice começando em 1 
 					int index = atoi(token.c_str()) - 1;
-
 
 					vbuffer.push_back(vertices[index].x);
 					vbuffer.push_back(vertices[index].y);
 					vbuffer.push_back(vertices[index].z);
 
-					vbuffer.push_back(rand() % 256 / 255.0);
-					vbuffer.push_back(rand() % 256 / 255.0);
-					vbuffer.push_back(rand() % 256 / 255.0);
+					vbuffer.push_back(1.0);
+					vbuffer.push_back(0.0);
+					vbuffer.push_back(0.0);
+
+					//buscando o índice da coordenada de textura vt
+					tokens[i] = tokens[i].substr(pos + 1, tokens[i].size());
+					pos = tokens[i].find("/");
+					token = tokens[i].substr(0, pos);
+					int indext = atoi(token.c_str()) - 1;
+					//cout << token << endl;
+					vbuffer.push_back(texcoords[indext].s);
+					vbuffer.push_back(texcoords[indext].t);
+
+					//buscando o índice do vetor normal vn
+					token = tokens[i].substr(pos + 1, tokens[i].size());
+					int indexn = atoi(token.c_str()) - 1;
+					//cout << token << endl;
+					vbuffer.push_back(normals[indexn].x);
+					vbuffer.push_back(normals[indexn].y);
+					vbuffer.push_back(normals[indexn].z);
+
 				}
 			}
 		}
@@ -307,13 +336,12 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 	inputFile.close();
 	GLuint VBO, VAO;
 
-	// retorna o num de vértices. 6 floats tem a informação do vértice nesse momento (sem textura e normal)
-	nVerts = vbuffer.size() / 6; //Provisório    
+	nVerts = vbuffer.size() / 11;
 
 	//Geração do identificador do VBO   
+
 	glGenBuffers(1, &VBO);    //Faz a conexão (vincula) do buffer como um buffer de array    
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); //Envia os dados do array de floats para o buffer da OpenGl    
-	// .size() * sizeof(GLfloat) é usado para pegar o numero de bytes do vbuffer, já que agora ele é alocado dinamicamente
 	glBufferData(GL_ARRAY_BUFFER, vbuffer.size() * sizeof(GLfloat), vbuffer.data(), GL_STATIC_DRAW);
 
 	//Geração do identificador do VAO (Vertex Array Object)    
@@ -322,13 +350,22 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 
 	glBindVertexArray(VAO);
 	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando:     // Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)    // Numero de valores que o atributo tem (por ex, 3 coordenadas xyz)     // Tipo do dado    // Se está normalizado (entre zero e um)    // Tamanho em bytes     // Deslocamento a partir do byte zero     //Atributo posição (x, y, z)    
-	// 6 é o numero de floats que armazenam as informações do vértice. Começa em 0, e desloca de 3 em 3.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	//Atributo cor (r, g, b)    
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);    // Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice     // atualmente vinculado - para que depois possamos desvincular com segurança    
+
+
+	//Atributo coordenada de texturas (s,t)    
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);    // Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice     // atualmente vinculado - para que depois possamos desvincular com segurança   
+
+	//Atributo normal do vértice (x,y,z)    
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(8 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);    // Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice     // atualmente vinculado - para que depois possamos desvincular com segurança    
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);  // Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)    
 	glBindVertexArray(0);
 

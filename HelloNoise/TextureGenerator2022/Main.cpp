@@ -47,6 +47,24 @@ utils::NoiseMap BuildAHeightMap (int w, int h, float *bounds) {
    return heightMap;
 }
 
+utils::NoiseMap BuildAMountainousTerrain(int w, int h, float* bounds) {
+	module::RidgedMulti mountainTerrain;
+
+
+
+	//Utilizando a biblioteca auxiliar noiseutils, podemos instanciar um mapa de noise, que neste caso será utilizado para gerar um heightmap
+	utils::NoiseMap heightMap;
+
+	utils::NoiseMapBuilderPlane heightMapBuilder;
+	heightMapBuilder.SetSourceModule(mountainTerrain);
+	heightMapBuilder.SetDestNoiseMap(heightMap);
+	heightMapBuilder.SetDestSize(w, h);
+	heightMapBuilder.SetBounds(bounds[0], bounds[1], bounds[2], bounds[3]);
+	heightMapBuilder.Build();
+
+	return heightMap;
+}
+
 utils::NoiseMap BuildASphericalHeightMap(int w, int h) {
 	//Classe para a criação de ruído de perlin (Perlin Noise)
 	module::Perlin myModule;
@@ -76,30 +94,27 @@ void RenderHeightMap(utils::NoiseMap heightMap, std::string filename){
  
    //Para definir faixas de cores para os BIOMAS... 
   renderer.ClearGradient ();
-  //renderer.AddGradientPoint (-1.0000, utils::Color (  0,   0, 128, 255)); // deeps
-  //renderer.AddGradientPoint (-0.2500, utils::Color (  0,   0, 255, 255)); // shallow
-  //renderer.AddGradientPoint ( 0.0000, utils::Color (  0, 128, 255, 255)); // shore
-  //renderer.AddGradientPoint ( 0.0625, utils::Color (240, 240,  64, 255)); // sand
-  //renderer.AddGradientPoint ( 0.1250, utils::Color ( 32, 160,   0, 255)); // grass
-  //renderer.AddGradientPoint ( 0.3750, utils::Color (224, 224,   0, 255)); // dirt
-  //renderer.AddGradientPoint ( 0.7500, utils::Color (128, 128, 128, 255)); // rock
-  //renderer.AddGradientPoint ( 1.0000, utils::Color (255, 255, 255, 255)); // snow
 
-  //Criando aleatoriamente os biomas
-  int n = rand() % 7 + 2; // sorteia de 2 a 8 biomas
-  float slice = 2.0 / (float)n; //divide o espaço de -1 a 1 entre o nro de biomas sorteado
+  // Colore a imagem com os gradientes dos biomas
+  //renderer.AddGradientPoint(-1.0000, utils::Color(0, 0, 128, 255)); // deeps
+  //renderer.AddGradientPoint(-0.2500, utils::Color(0, 0, 255, 255)); // shallow
+  //renderer.AddGradientPoint(0.0000, utils::Color(0, 128, 255, 255)); // shore
+  //renderer.AddGradientPoint(0.0625, utils::Color(240, 240, 64, 255)); // sand
+  //renderer.AddGradientPoint(0.1250, utils::Color(32, 160, 0, 255)); // grass
+  //renderer.AddGradientPoint(0.3750, utils::Color(224, 224, 0, 255)); // dirt
+  //renderer.AddGradientPoint(0.7500, utils::Color(128, 128, 128, 255)); // rock
+  //renderer.AddGradientPoint(1.0000, utils::Color(255, 255, 255, 255)); // snow
 
-  for (int i = 0; i < n; i++)
-  {
-	  int R = rand() % 256;
-	  int G = rand() % 256;
-	  int B = rand() % 256;
-	  renderer.AddGradientPoint(-1.0000 + i*slice, utils::Color(R, G, B, 255));
-  }
+  renderer.AddGradientPoint(-1.00, utils::Color(32, 160, 0, 255)); // grass
+  renderer.AddGradientPoint(-0.25, utils::Color(224, 224, 0, 255)); // dirt
+  renderer.AddGradientPoint(0.25, utils::Color(128, 128, 128, 255)); // rock
+  renderer.AddGradientPoint(1.00, utils::Color(255, 255, 255, 255)); // snow
 
-   //renderer.EnableLight ();
-   //renderer.SetLightContrast (3); // Triple the contrast
-   //renderer.SetLightBrightness (2); // Double the brightness
+  // Adiciona iluminação artificial
+   renderer.EnableLight ();
+   renderer.SetLightContrast (3); // Triple the contrast
+   renderer.SetLightBrightness (2); // Double the brightness
+
 
    renderer.Render ();
 
@@ -115,16 +130,22 @@ int main (int argc, char** argv)
 	srand(time(0));
 	
 	utils::NoiseMap heightMap;
-	float bounds[4] = {2.0, 6.0, 1.0, 5.0};
+	float bounds[4] = { 2.0, 6.0, 1.0, 5.0 };
+	//float bounds[4] = { 6.0, 8.0, 1.0, 5.0 };
+	//float bounds[4] = { 2.0, 6.0, 5.0, 9.0 };
+	//float bounds[4] = { 6.0, 8.0, 5.0, 9.0 };
 	
 	//Modo padrão
 	//heightMap = BuildAHeightMap(512, 512, bounds);
 
 	//Para criar o mapa com projeção esférica
-	heightMap = BuildASphericalHeightMap(1024, 512);
+	//heightMap = BuildASphericalHeightMap(1024, 512);
+
+	// Cria um terreno montanhoso
+	heightMap = BuildAMountainousTerrain(512, 512, bounds);
+
 	
-	
-	RenderHeightMap(heightMap,"../example.bmp");
+	RenderHeightMap(heightMap,"../gradient-2.bmp");
 	
 
    std::cout << "Success!\n";

@@ -276,6 +276,20 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 				ssline >> v.x >> v.y >> v.z;
 				vertices.push_back(v);
 			}
+			if (word == "vn")
+			{
+				glm::vec3 vn;
+				ssline >> vn.x >> vn.y >> vn.z;
+				normals.push_back(vn);
+
+			}
+			if (word == "vt")
+			{
+				glm::vec2 vt;
+				ssline >> vt.s >> vt.t;
+				texcoords.push_back(vt);
+
+			}
 			if (word == "f")
 			{
 				string tokens[3];

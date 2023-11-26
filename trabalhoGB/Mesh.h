@@ -12,7 +12,7 @@ class Mesh
 public:
 	Mesh() {}
 	~Mesh() {}
-	void initialize(GLuint VAO, Shader* shader, int nVerts);
+	void initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID);
 	void update(char rotateChar); // atualiza a matriz de transformações
 	void setupRotation(char rotateChar, glm::mat4& model);
 	void setupTranslation(glm::mat4& model);
@@ -23,10 +23,14 @@ public:
 	void decrementScale(float scaleStep = 0.1f);
 	void draw();
 	void deleteVAO();
+	string getTextureFilePath();
+	void setTextureFilePath(string path);
 
 protected:
 	GLuint VAO; // id do buffer da geometria
 	int nVerts;
+	GLuint texID;
+	string texFilePath;
 
 	// informações que compõem a matriz de modelo - model matriz
 	glm::vec3 position;

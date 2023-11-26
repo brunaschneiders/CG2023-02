@@ -1,10 +1,11 @@
 ﻿#include "Mesh.h"
 
-void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts)
+void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID)
 {
 	this->VAO = VAO;
 	this->shader = shader;
 	this->nVerts = nVerts;
+	this->texID = texID;
 	this->scaleLevel = 1.0f;
 }
 
@@ -18,6 +19,8 @@ void Mesh::update(char rotateChar)
 	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char.
 	// lá ela é multiplicada pela matriz que tem as transformações do objeto (model) e pela coordenada do vértice
 	shader->setMat4("model", glm::value_ptr(model));
+
+	glUniform1i(glGetUniformLocation(shader->ID, "tex_buffer"), 0);
 }
 
 // configura a rotação do objeto, se ela existir
@@ -99,12 +102,26 @@ void Mesh::draw()
 	// Poligono Preenchido - GL_TRIANGLES
 	// necessario dar um bind no VAO antes de desenhar os triangulos de cada geometria.
 	glBindVertexArray(VAO);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texID);
+
+	
 	// desenha os triangulos. No caso da primitiva GL_TRIANGLES, a cada 3 v�rices, ele fecha um tri�ngulo v�lido.
 	glDrawArrays(GL_TRIANGLES, 0, nVerts);
 
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Mesh::deleteVAO() {
 	glDeleteVertexArrays(1, &VAO);
+}
+
+void Mesh::setTextureFilePath(string path) {
+	this->texFilePath = path;
+}
+
+string Mesh::getTextureFilePath() {
+	return texFilePath;
 }

@@ -1,6 +1,7 @@
 #include "Camera.h"
+#include <vector>
 
-void Camera::initialize(Shader* shader, int width, int height)
+void Camera::initialize(Shader* shader, int width, int height, vector<GLfloat> ka, vector<GLfloat> ks, float q)
 {
 	this -> shader = shader;
 
@@ -22,6 +23,15 @@ void Camera::initialize(Shader* shader, int width, int height)
 	// Criando a matriz de projecao
 	projection = glm::perspective(glm::radians(45.0f), (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
 	shader->setMat4("projection", glm::value_ptr(projection));
+
+	// criando as informações de iluminação
+	shader->setVec3("ka", ka[0], ka[1], ka[2]);
+	shader->setFloat("kd", 0.7f);
+	shader->setVec3("ks", ks[0], ks[1], ks[2]);
+	shader->setFloat("q", q);
+	shader->setVec3("lightPos", 15.0f, 15.0f, 2.0f);
+	shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+	shader->setVec3("cameraPos", cameraPos.x, cameraPos.y, cameraPos.z);
 }
 
 void Camera::update()

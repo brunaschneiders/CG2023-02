@@ -1,8 +1,17 @@
+ 
+
 #include <iostream>
-#include <fstream>	
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+#include <cassert>
+#include <cmath>
 #include <string>
 #include <vector>
 #include <assert.h>
+#include <cstdio>
+#include <map>
+
 
 using namespace std;
 
@@ -12,10 +21,14 @@ using namespace std;
 // GLFW
 #include <GLFW/glfw3.h>
 
-//GLM
+// GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+// STB image
+#define STB_IMAGE_IMPLEMENTATION   
+#include "stb_image.h"
 
 #include "Shader.h"
 #include "Camera.h"
@@ -28,6 +41,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // Prot�tipos das fun��es
 int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color = glm::vec3(1.0, 0.0, 0.0));
+int loadTexture(string path);
+void loadMtl(string filename, Mesh& object);
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
@@ -45,8 +60,15 @@ char rotateChar;
 // eixo selecionado para translação
 char translateChar;
 
+//iluminacao 
+std::vector<GLfloat> ka;
+std::vector<GLfloat> ks;
+float ns;
+
 std::vector<std::string> objFilesPath = {
-	"../3DModels/Suzannes/suzanneTriLowPoly.obj",
+	//"../3DModels/Suzannes/suzanneTri.obj",
+	 "../3DModels/Planeta/Planeta.obj",
+	//"../3DModels/Suzannes/suzanneTriLowPoly.obj",
 	//"../3DModels/NaveET/NaveET.obj",
 	//"../3DModels/Classic-NoTexture/bunny.obj",
 	//"../3DModels/Classic-NoTexture/camel.obj",
@@ -102,15 +124,17 @@ int main()
 		Mesh object;
 		GLuint VAO;
 		int nVerts = 0;
+		GLuint texID = loadTexture("../3DModels/Planeta/Terra.jpg");
+		loadMtl("../3DModels/Planeta/Planeta.mtl", object);
 
 		VAO = loadSimpleOBJ(path, nVerts);
-		object.initialize(VAO, &shader, nVerts);
+		object.initialize(VAO, &shader, nVerts, texID);
 		objects.push_back(object);
 	};
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.initialize(&shader, WIDTH, HEIGHT);
+	camera.initialize(&shader, WIDTH, HEIGHT, ka, ks, ns);
 
 
 	// Loop da aplica��o - "game loop"
@@ -244,7 +268,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 // gera o buffer de geometria e retorna o identificador do VAO que foi gerado a partir do arquivo lido
 int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 {
-	//vector em que estaremos armazenando o buffer de geometria => é o array de floats da geometria
+	//vector em que estaremos armazenando o buffer de geometria
 	vector <GLfloat> vbuffer;
 	//vectors auxiliares na leitura    
 	vector <glm::vec3> vertices;
@@ -253,7 +277,6 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 
 	//stream de leitura de arquivo em C++    
 	ifstream inputFile;
-	// o c_str pega o array de char de dentro da string que é o que o open() espera.
 	inputFile.open(filepath.c_str());
 
 	if (inputFile.is_open())
@@ -267,12 +290,10 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 			string word;
 
 			istringstream ssline(line);
-			// word é a primeira palavra do obj
 			ssline >> word;
 			if (word == "v")
 			{
 				glm::vec3 v;
-				// posição x, y e z do vértice
 				ssline >> v.x >> v.y >> v.z;
 				vertices.push_back(v);
 			}
@@ -298,18 +319,33 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 				{
 					int pos = tokens[i].find("/");
 					string token = tokens[i].substr(0, pos);
-
-					// o -1 é pq no arquivo obj é considerado o indice começando em 1 
 					int index = atoi(token.c_str()) - 1;
-
 
 					vbuffer.push_back(vertices[index].x);
 					vbuffer.push_back(vertices[index].y);
 					vbuffer.push_back(vertices[index].z);
 
-					vbuffer.push_back(rand() % 256 / 255.0);
-					vbuffer.push_back(rand() % 256 / 255.0);
-					vbuffer.push_back(rand() % 256 / 255.0);
+					vbuffer.push_back(1.0);
+					vbuffer.push_back(0.0);
+					vbuffer.push_back(0.0);
+
+					//buscando o índice da coordenada de textura vt
+					tokens[i] = tokens[i].substr(pos + 1, tokens[i].size());
+					pos = tokens[i].find("/");
+					token = tokens[i].substr(0, pos);
+					int indext = atoi(token.c_str()) - 1;
+					//cout << token << endl;
+					vbuffer.push_back(texcoords[indext].s);
+					vbuffer.push_back(texcoords[indext].t);
+
+					//buscando o índice do vetor normal vn
+					token = tokens[i].substr(pos + 1, tokens[i].size());
+					int indexn = atoi(token.c_str()) - 1;
+					//cout << token << endl;
+					vbuffer.push_back(normals[indexn].x);
+					vbuffer.push_back(normals[indexn].y);
+					vbuffer.push_back(normals[indexn].z);
+
 				}
 			}
 		}
@@ -321,13 +357,12 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 	inputFile.close();
 	GLuint VBO, VAO;
 
-	// retorna o num de vértices. 6 floats tem a informação do vértice nesse momento (sem textura e normal)
-	nVerts = vbuffer.size() / 6; //Provisório    
+	nVerts = vbuffer.size() / 11;
 
 	//Geração do identificador do VBO   
+
 	glGenBuffers(1, &VBO);    //Faz a conexão (vincula) do buffer como um buffer de array    
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); //Envia os dados do array de floats para o buffer da OpenGl    
-	// .size() * sizeof(GLfloat) é usado para pegar o numero de bytes do vbuffer, já que agora ele é alocado dinamicamente
 	glBufferData(GL_ARRAY_BUFFER, vbuffer.size() * sizeof(GLfloat), vbuffer.data(), GL_STATIC_DRAW);
 
 	//Geração do identificador do VAO (Vertex Array Object)    
@@ -336,15 +371,112 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 
 	glBindVertexArray(VAO);
 	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando:     // Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)    // Numero de valores que o atributo tem (por ex, 3 coordenadas xyz)     // Tipo do dado    // Se está normalizado (entre zero e um)    // Tamanho em bytes     // Deslocamento a partir do byte zero     //Atributo posição (x, y, z)    
-	// 6 é o numero de floats que armazenam as informações do vértice. Começa em 0, e desloca de 3 em 3.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	//Atributo cor (r, g, b)    
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);    // Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice     // atualmente vinculado - para que depois possamos desvincular com segurança    
+
+
+	//Atributo coordenada de texturas (s,t)    
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);    // Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice     // atualmente vinculado - para que depois possamos desvincular com segurança   
+
+	//Atributo normal do vértice (x,y,z)    
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(8 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);    // Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice     // atualmente vinculado - para que depois possamos desvincular com segurança    
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);  // Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)    
 	glBindVertexArray(0);
 
 	return VAO;
+}
+
+int loadTexture(string path)
+{
+	GLuint tex;
+
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+
+	if (data)
+	{
+		if (nrChannels == 3) //jpg, bmp
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		}
+		else //png
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+
+	stbi_image_free(data);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return tex;
+}
+
+void loadMtl(string path, Mesh& object) {
+	std::ifstream file(path);
+
+	cout << path << endl;
+
+	if (!file.is_open()) {
+		std::cout << "Failed to open mtl file." << std::endl;
+	}
+
+	string line, textureFilePath;
+
+	while (std::getline(file, line)) {
+		if (line.length() > 0) {
+
+			std::istringstream iss(line);
+			string prefix;
+			iss >> prefix;
+
+			if (prefix == "map_Kd") {
+				iss >> textureFilePath;
+				object.setTextureFilePath(textureFilePath);
+			}
+			else if (prefix == "Ka") {
+				glm::vec3 temp_ka;
+				iss >> temp_ka.x >> temp_ka.y >> temp_ka.z;
+				iss >> temp_ka.x >> temp_ka.y >> temp_ka.z;
+
+				ka.push_back(temp_ka.x);
+				ka.push_back(temp_ka.y);
+				ka.push_back(temp_ka.z);
+			}
+			else if (prefix == "Ks") {
+				glm::vec3 temp_ks;
+				iss >> temp_ks.x >> temp_ks.y >> temp_ks.z;
+
+				ks.push_back(temp_ks.x);
+				ks.push_back(temp_ks.x);
+				ks.push_back(temp_ks.x);
+			}
+			else if (prefix == "Ns") {
+				iss >> ns;
+			}
+		}
+	}
+
+	file.close();
 }

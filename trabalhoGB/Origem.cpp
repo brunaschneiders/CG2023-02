@@ -43,7 +43,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color = glm::vec3(1.0, 0.0, 0.0));
 int loadTexture(string path);
 void loadMtl(string path, string& textureFilePathProp, glm::vec3& ka, glm::vec3& ks, float& q);
-void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition);
+void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition, float& objScale);
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
@@ -65,6 +65,7 @@ std::vector<std::string> configFilesPath = {
 	"../3DModels/config/suzanne.txt",
 	"../3DModels/config/terra.txt",
 	"../3DModels/config/mercurio.txt",
+	"../3DModels/config/hello-noise.txt",
 };
 
 std::vector<Mesh> objects;
@@ -123,16 +124,16 @@ int main()
 		glm::vec3 objPosition;
 		//iluminacao 
 		glm::vec3 ka, ks;
-		float ns;
+		float ns, objScale = 1.0f;
 
-		loadObjectConfig(path, objFilePath, mtlFilePath, objPosition);
+		loadObjectConfig(path, objFilePath, mtlFilePath, objPosition, objScale);
 		loadMtl(mtlFilePath, textureFilePath, ka, ks, ns);
 		GLuint texID = loadTexture(textureFilePath);
 
 		VAO = loadSimpleOBJ(objFilePath, nVerts);
 
 		cout << "nVerts: " << nVerts << "mtlFilePath" << mtlFilePath << endl;
-		object.initialize(VAO, &shader, nVerts, texID, objPosition, ka, ks, ns);
+		object.initialize(VAO, &shader, nVerts, texID, objPosition, objScale, ka, ks, ns);
 		objects.push_back(object);
 	};
 
@@ -386,7 +387,7 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 	return VAO;
 }
 
-void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition) {
+void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition, float& objScale) {
 	Mesh object;
 
 	std::ifstream file(path);
@@ -414,6 +415,9 @@ void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm
 			else if (prefix == "position") {
 				char comma;
 				iss >> objPosition.x >> comma >> objPosition.y >> comma >> objPosition.z;
+			}
+			else if (prefix == "scale") {
+				iss >> objScale;
 			}
 		}
 	}

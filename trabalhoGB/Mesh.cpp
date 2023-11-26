@@ -1,13 +1,13 @@
 ﻿#include "Mesh.h"
 #include <vector>
 
-void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm::vec3 initialPosition, glm::vec3 ka, glm::vec3 ks, float q)
+void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm::vec3 initialPosition, float initialScale, glm::vec3 ka, glm::vec3 ks, float q)
 {
 	this->VAO = VAO;
 	this->shader = shader;
 	this->nVerts = nVerts;
 	this->texID = texID;
-	this->scaleLevel = 1.0f;
+	this->scaleLevel = initialScale;
 	this->initialPosition = initialPosition;
 
 

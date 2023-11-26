@@ -1,3 +1,4 @@
 obj ../3DModels/Suzannes/SuzanneTri.obj
 mtl ../3DModels/Suzannes/SuzanneTriTextured.mtl
+scale 0.5f
 position 0.0, 0.0, 0.0

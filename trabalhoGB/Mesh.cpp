@@ -8,6 +8,7 @@ void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm:
 	this->nVerts = nVerts;
 	this->texID = texID;
 	this->scaleLevel = initialScale;
+	this->initialScale = initialScale;
 	this->initialPosition = initialPosition;
 
 
@@ -18,11 +19,11 @@ void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm:
 	shader->setFloat("q", q);
 }
 
-void Mesh::update(char rotateChar)
+void Mesh::update()
 {
 	// Criando a matriz de modelo => matriz de transforma��o do objeto em si. Precisa colocar ela no shader pq � uma informa��o que vai ser usada por ele.
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
-	setupRotation(rotateChar, model);
+	setupRotation(model);
 	setupTranslation(model);
 	setupScale(model);
 	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char.
@@ -33,7 +34,7 @@ void Mesh::update(char rotateChar)
 }
 
 // configura a rotação do objeto, se ela existir
-void Mesh::setupRotation(char rotateChar, glm::mat4& model)
+void Mesh::setupRotation(glm::mat4& model)
 {
 	float angle = (GLfloat)glfwGetTime();
 
@@ -62,8 +63,20 @@ void Mesh::setupScale(glm::mat4& model)
 	model = glm::scale(model, glm::vec3(scaleLevel, scaleLevel, scaleLevel));
 }
 
-void Mesh::incrementTranslationOffset(char translateChar, float translateStep)
+void Mesh::updateRotateChar(char newRotateChar)
 {
+	rotateChar = newRotateChar;
+}
+
+void Mesh::updateTranslateChar(char newTranslateChar)
+{
+	translateChar = newTranslateChar;
+}
+
+void Mesh::incrementTranslationOffset()
+{
+	float translateStep = 0.1f;
+
 	switch (translateChar) {
 	case 'x':
 		translateXOffset += translateStep;
@@ -77,7 +90,7 @@ void Mesh::incrementTranslationOffset(char translateChar, float translateStep)
 	}
 }
 
-void Mesh::decrementTranslationOffset(char translateChar)
+void Mesh::decrementTranslationOffset()
 {
 	float translateStep = 0.1f;
 
@@ -103,6 +116,24 @@ void Mesh::incrementScale()
 void Mesh::decrementScale(float scaleStep)
 {
 	scaleLevel -= scaleStep;
+}
+
+void Mesh::resetRotation()
+{
+	updateRotateChar(NULL);
+}
+
+void Mesh::resetTranslation()
+{
+	translateChar = NULL;
+	translateXOffset = 0;
+	translateYOffset = 0;
+	translateZOffset = 0;
+}
+
+void Mesh::resetScale()
+{
+	scaleLevel = initialScale;
 }
 
 void Mesh::draw()

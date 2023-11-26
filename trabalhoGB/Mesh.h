@@ -13,14 +13,19 @@ public:
 	Mesh() {}
 	~Mesh() {}
 	void initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm::vec3 initialPosition, float initialScale, glm::vec3 ka, glm::vec3 ks, float q);
-	void update(char rotateChar); // atualiza a matriz de transformações
-	void setupRotation(char rotateChar, glm::mat4& model);
+	void update(); // atualiza a matriz de transformações
+	void setupRotation(glm::mat4& model);
 	void setupTranslation(glm::mat4& model);
-	void incrementTranslationOffset(char translateChar, float translateStep = 0.1f);
-	void decrementTranslationOffset(char translateChar);
 	void setupScale(glm::mat4& model);
+	void updateRotateChar(char newRotateChar);
+	void updateTranslateChar(char newTranslateChar);
+	void incrementTranslationOffset();
+	void decrementTranslationOffset();
 	void incrementScale();
 	void decrementScale(float scaleStep = 0.1f);
+	void resetTranslation();
+	void resetScale();
+	void resetRotation();
 	void draw();
 	void deleteVAO();
 	string getTextureFilePath();
@@ -46,9 +51,15 @@ protected:
 	float translateYOffset;
 	float translateZOffset;
 
+	// eixo selecionado para rotação
+	char rotateChar;
+	// eixo selecionado para translação
+	char translateChar;
+
 	glm::vec3 initialPosition;
 
 	// nível de escala que é aplicado em todos os eixos
 	float scaleLevel;
+	float initialScale;
 };
 

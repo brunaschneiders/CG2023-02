@@ -56,10 +56,6 @@ char actionChar;
 char TRANSLATE_ACTION_CHAR = 't';
 char ROTATE_ACTION_CHAR = 'r';
 char SCALE_ACTION_CHAR = 'c';
-// eixo selecionado para rotação
-char rotateChar;
-// eixo selecionado para translação
-char translateChar;
 
 std::vector<std::string> configFilesPath = {
 	"../3DModels/config/suzanne.txt",
@@ -69,7 +65,7 @@ std::vector<std::string> configFilesPath = {
 };
 
 std::vector<Mesh> objects;
-int currentObjectIndex = 0;
+int selectedObjectIndex = 0;
 
 
 int main()
@@ -156,13 +152,8 @@ int main()
 		glPointSize(20);
 
 
-		float translationOffset = 0.0;
-
 		for (Mesh object : objects) {
-			//object.incrementTranslationOffset('x', translationOffset);
-			//translationOffset += 2.0f;
-			//object.decrementScale(0.6f);
-			object.update(rotateChar);
+			object.update();
 			object.draw();
 		}
 
@@ -191,13 +182,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// controla a seleção do objeto
 	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
 	{
-		if (currentObjectIndex == objects.size() - 1) currentObjectIndex = 0;
-		else currentObjectIndex += 1;
+		if (selectedObjectIndex == objects.size() - 1) selectedObjectIndex = 0;
+		else selectedObjectIndex += 1;
+		std::cout << "selectedObjectIndex: " << selectedObjectIndex << std::endl;
 	}
 	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
 	{
-		if (currentObjectIndex == 0) currentObjectIndex = objects.size() - 1;
-		else currentObjectIndex -= 1;
+		if (selectedObjectIndex == 0) selectedObjectIndex = objects.size() - 1;
+		else selectedObjectIndex -= 1;
+		std::cout << "selectedObjectIndex: " << selectedObjectIndex << std::endl;
 	}
 
 	// controle do tipo de ação que está sendo realizada (rotação, translação ou alteração de escala)
@@ -208,27 +201,27 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// controla o eixo em que a ação será aplicada
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
-		if (actionChar == TRANSLATE_ACTION_CHAR) translateChar = 'x';
-		else if (actionChar == ROTATE_ACTION_CHAR) rotateChar = 'x';
+		if (actionChar == TRANSLATE_ACTION_CHAR) objects[selectedObjectIndex].updateTranslateChar('x');
+		else if (actionChar == ROTATE_ACTION_CHAR)  objects[selectedObjectIndex].updateRotateChar('x');
 	};
 	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
 	{
-		if (actionChar == TRANSLATE_ACTION_CHAR) translateChar = 'y';
-		else if (actionChar == ROTATE_ACTION_CHAR) rotateChar = 'y';
+		if (actionChar == TRANSLATE_ACTION_CHAR) objects[selectedObjectIndex].updateTranslateChar('y');
+		else if (actionChar == ROTATE_ACTION_CHAR)  objects[selectedObjectIndex].updateRotateChar('y');
 	}
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
 	{
-		if (actionChar == TRANSLATE_ACTION_CHAR) translateChar = 'z';
-		else if (actionChar == ROTATE_ACTION_CHAR) rotateChar = 'z';
+		if (actionChar == TRANSLATE_ACTION_CHAR) objects[selectedObjectIndex].updateTranslateChar('z');
+		else if (actionChar == ROTATE_ACTION_CHAR) objects[selectedObjectIndex].updateRotateChar('z');
 	}
 
 	// controla a direção da translação
-	if (key == GLFW_KEY_UP && actionChar == TRANSLATE_ACTION_CHAR) objects[currentObjectIndex].incrementTranslationOffset(translateChar);
-	if (key == GLFW_KEY_DOWN && actionChar == TRANSLATE_ACTION_CHAR) objects[currentObjectIndex].decrementTranslationOffset(translateChar);
+	if (key == GLFW_KEY_UP && actionChar == TRANSLATE_ACTION_CHAR) objects[selectedObjectIndex].incrementTranslationOffset();
+	if (key == GLFW_KEY_DOWN && actionChar == TRANSLATE_ACTION_CHAR) objects[selectedObjectIndex].decrementTranslationOffset();
 
 	// controla se a escala diminui ou aumenta
-	if (key == GLFW_KEY_UP && actionChar == SCALE_ACTION_CHAR && action == GLFW_PRESS) objects[currentObjectIndex].incrementScale();
-	if (key == GLFW_KEY_DOWN && actionChar == SCALE_ACTION_CHAR && action == GLFW_PRESS) objects[currentObjectIndex].decrementScale();
+	if (key == GLFW_KEY_UP && actionChar == SCALE_ACTION_CHAR && action == GLFW_PRESS) objects[selectedObjectIndex].incrementScale();
+	if (key == GLFW_KEY_DOWN && actionChar == SCALE_ACTION_CHAR && action == GLFW_PRESS) objects[selectedObjectIndex].decrementScale();
 
 	// controla a movimentação da câmera
 	if (key == GLFW_KEY_W) camera.moveForward();
@@ -249,8 +242,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
 	{
 		actionChar = NULL;
-		rotateChar = NULL;
-		translateChar = NULL;
+
+		objects[selectedObjectIndex].resetRotation();
+		objects[selectedObjectIndex].resetTranslation();
+		objects[selectedObjectIndex].resetScale();
 	}
 }
 

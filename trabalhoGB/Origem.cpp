@@ -42,7 +42,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 // Prot�tipos das fun��es
 int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color = glm::vec3(1.0, 0.0, 0.0));
 int loadTexture(string path);
-void loadMtl(string filename, Mesh& object);
+void loadMtl(string path, string& textureFilePathProp, glm::vec3& ka, glm::vec3& ks, float& q);
+void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition);
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
@@ -60,23 +61,15 @@ char rotateChar;
 // eixo selecionado para translação
 char translateChar;
 
-//iluminacao 
-std::vector<GLfloat> ka;
-std::vector<GLfloat> ks;
-float ns;
-
-std::vector<std::string> objFilesPath = {
-	//"../3DModels/Suzannes/suzanneTri.obj",
-	 "../3DModels/Planeta/Planeta.obj",
-	//"../3DModels/Suzannes/suzanneTriLowPoly.obj",
-	//"../3DModels/NaveET/NaveET.obj",
-	//"../3DModels/Classic-NoTexture/bunny.obj",
-	//"../3DModels/Classic-NoTexture/camel.obj",
-	//"../3DModels/Classic-NoTexture/cat.obj",
+std::vector<std::string> configFilesPath = {
+	"../3DModels/config/suzanne.txt",
+	"../3DModels/config/terra.txt",
+	"../3DModels/config/mercurio.txt",
 };
+
 std::vector<Mesh> objects;
 int currentObjectIndex = 0;
-bool displayAllObjects = false;
+
 
 int main()
 {
@@ -119,22 +112,33 @@ int main()
 
 	glUseProgram(shader.ID);
 
-	// Carrega a geometria dos obj
-	for (const std::string& path : objFilesPath) {
+	// Carrega a geometria e textura dos obj
+	for (const std::string& path : configFilesPath) {
 		Mesh object;
 		GLuint VAO;
-		int nVerts = 0;
-		GLuint texID = loadTexture("../3DModels/Planeta/Terra.jpg");
-		loadMtl("../3DModels/Planeta/Planeta.mtl", object);
 
-		VAO = loadSimpleOBJ(path, nVerts);
-		object.initialize(VAO, &shader, nVerts, texID);
+		string objFilePath, mtlFilePath, textureFilePath;
+
+		int nVerts = 0;
+		glm::vec3 objPosition;
+		//iluminacao 
+		glm::vec3 ka, ks;
+		float ns;
+
+		loadObjectConfig(path, objFilePath, mtlFilePath, objPosition);
+		loadMtl(mtlFilePath, textureFilePath, ka, ks, ns);
+		GLuint texID = loadTexture(textureFilePath);
+
+		VAO = loadSimpleOBJ(objFilePath, nVerts);
+
+		cout << "nVerts: " << nVerts << "mtlFilePath" << mtlFilePath << endl;
+		object.initialize(VAO, &shader, nVerts, texID, objPosition, ka, ks, ns);
 		objects.push_back(object);
 	};
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.initialize(&shader, WIDTH, HEIGHT, ka, ks, ns);
+	camera.initialize(&shader, WIDTH, HEIGHT);
 
 
 	// Loop da aplica��o - "game loop"
@@ -151,20 +155,14 @@ int main()
 		glPointSize(20);
 
 
-		if (displayAllObjects) {
-			float translationOffset = 0.0;
+		float translationOffset = 0.0;
 
-			for (Mesh object : objects) {
-				object.incrementTranslationOffset('x', translationOffset);
-				translationOffset += 2.0f;
-				object.decrementScale(0.6f);
-				object.update(rotateChar);
-				object.draw();
-			}
-		}
-		else {
-			objects[currentObjectIndex].update(rotateChar);
-			objects[currentObjectIndex].draw();
+		for (Mesh object : objects) {
+			//object.incrementTranslationOffset('x', translationOffset);
+			//translationOffset += 2.0f;
+			//object.decrementScale(0.6f);
+			object.update(rotateChar);
+			object.draw();
 		}
 
 		camera.update();
@@ -199,11 +197,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		if (currentObjectIndex == 0) currentObjectIndex = objects.size() - 1;
 		else currentObjectIndex -= 1;
-	}
-
-	// controla a exibição de todos os objetos na cena
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-		displayAllObjects = !displayAllObjects;
 	}
 
 	// controle do tipo de ação que está sendo realizada (rotação, translação ou alteração de escala)
@@ -393,6 +386,41 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color)
 	return VAO;
 }
 
+void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition) {
+	Mesh object;
+
+	std::ifstream file(path);
+
+	if (!file.is_open()) {
+		std::cout << "Failed to open the config file." << std::endl;
+	}
+
+	string line;
+
+	while (std::getline(file, line)) {
+		if (line.length() > 0) {
+
+			std::istringstream iss(line);
+			string prefix;
+			iss >> prefix;
+			if (prefix == "obj") {
+				iss >> objFilePath;
+				std::cout << objFilePath << std::endl;
+			}
+			else if (prefix == "mtl") {
+				iss >> mtlFilePath;
+				std::cout << mtlFilePath << std::endl;
+			}
+			else if (prefix == "position") {
+				char comma;
+				iss >> objPosition.x >> comma >> objPosition.y >> comma >> objPosition.z;
+			}
+		}
+	}
+
+	file.close();
+}
+
 int loadTexture(string path)
 {
 	GLuint tex;
@@ -433,7 +461,7 @@ int loadTexture(string path)
 	return tex;
 }
 
-void loadMtl(string path, Mesh& object) {
+void loadMtl(string path, string& textureFilePathProp, glm::vec3& ka, glm::vec3& ks, float& q) {
 	std::ifstream file(path);
 
 	cout << path << endl;
@@ -453,27 +481,17 @@ void loadMtl(string path, Mesh& object) {
 
 			if (prefix == "map_Kd") {
 				iss >> textureFilePath;
-				object.setTextureFilePath(textureFilePath);
+				textureFilePathProp = textureFilePath;
 			}
 			else if (prefix == "Ka") {
-				glm::vec3 temp_ka;
-				iss >> temp_ka.x >> temp_ka.y >> temp_ka.z;
-				iss >> temp_ka.x >> temp_ka.y >> temp_ka.z;
+				iss >> ka.x >> ka.y >> ka.z;
 
-				ka.push_back(temp_ka.x);
-				ka.push_back(temp_ka.y);
-				ka.push_back(temp_ka.z);
 			}
 			else if (prefix == "Ks") {
-				glm::vec3 temp_ks;
-				iss >> temp_ks.x >> temp_ks.y >> temp_ks.z;
-
-				ks.push_back(temp_ks.x);
-				ks.push_back(temp_ks.x);
-				ks.push_back(temp_ks.x);
+				iss >> ks.x >> ks.y >> ks.z;
 			}
 			else if (prefix == "Ns") {
-				iss >> ns;
+				iss >> q;
 			}
 		}
 	}

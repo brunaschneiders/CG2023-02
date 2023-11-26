@@ -12,7 +12,7 @@ class Mesh
 public:
 	Mesh() {}
 	~Mesh() {}
-	void initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID);
+	void initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm::vec3 initialPosition, glm::vec3 ka, glm::vec3 ks, float q);
 	void update(char rotateChar); // atualiza a matriz de transformações
 	void setupRotation(char rotateChar, glm::mat4& model);
 	void setupTranslation(glm::mat4& model);
@@ -45,6 +45,8 @@ protected:
 	float translateXOffset;
 	float translateYOffset;
 	float translateZOffset;
+
+	glm::vec3 initialPosition;
 
 	// nível de escala que é aplicado em todos os eixos
 	float scaleLevel;

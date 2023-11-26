@@ -1,12 +1,21 @@
 ﻿#include "Mesh.h"
+#include <vector>
 
-void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID)
+void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm::vec3 initialPosition, glm::vec3 ka, glm::vec3 ks, float q)
 {
 	this->VAO = VAO;
 	this->shader = shader;
 	this->nVerts = nVerts;
 	this->texID = texID;
 	this->scaleLevel = 1.0f;
+	this->initialPosition = initialPosition;
+
+
+	// criando as informações de iluminação
+	shader->setVec3("ka", ka[0], ka[1], ka[2]);
+	shader->setFloat("kd", 1.0f);
+	shader->setVec3("ks", ks[0], ks[1], ks[2]);
+	shader->setFloat("q", q);
 }
 
 void Mesh::update(char rotateChar)
@@ -44,7 +53,7 @@ void Mesh::setupRotation(char rotateChar, glm::mat4& model)
 // configura a translação do objeto, se ela existir
 void Mesh::setupTranslation(glm::mat4& model)
 {
-	model = glm::translate(model, glm::vec3(translateXOffset, translateYOffset, translateZOffset));
+	model = glm::translate(model, glm::vec3(initialPosition.x + translateXOffset, initialPosition.y + translateYOffset, initialPosition.z + translateZOffset));
 }
 
 // configura a escala do objeto. A escala é a mesma para todos os eixos

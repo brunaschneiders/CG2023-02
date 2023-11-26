@@ -1,0 +1,3 @@
+obj ../3DModels/Suzannes/SuzanneTri.obj
+mtl ../3DModels/Suzannes/SuzanneTriTextured.mtl
+position 0.0, 0.0, 0.0

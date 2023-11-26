@@ -6,14 +6,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
-#include <vector>
 
 class Camera
 {
 public:
 	Camera() {}
 	~Camera() {}
-	void initialize(Shader* shader, int width, int height, vector<GLfloat> ka, vector<GLfloat> ks, float q);
+	void initialize(Shader* shader, int width, int height);
 	void update();
 	void mouseMovement(GLFWwindow* window, double xpos, double ypos);
     void moveForward();

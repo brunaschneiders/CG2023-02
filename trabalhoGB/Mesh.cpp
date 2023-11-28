@@ -19,12 +19,16 @@ void Mesh::initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm:
 	shader->setFloat("q", q);
 }
 
-void Mesh::update()
+glm::vec3 Mesh::getPosition(){
+	return initialPosition;
+}
+
+void Mesh::update(glm::vec3 pointOnCurve)
 {
 	// Criando a matriz de modelo => matriz de transforma��o do objeto em si. Precisa colocar ela no shader pq � uma informa��o que vai ser usada por ele.
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	setupRotation(model);
-	setupTranslation(model);
+	setupTranslation(model, pointOnCurve);
 	setupScale(model);
 	// envia a matriz de model pro shader. glm::value_ptr(model) é o que transforma o glm::mat4 em um array de char.
 	// lá ela é multiplicada pela matriz que tem as transformações do objeto (model) e pela coordenada do vértice
@@ -52,9 +56,9 @@ void Mesh::setupRotation(glm::mat4& model)
 }
 
 // configura a translação do objeto, se ela existir
-void Mesh::setupTranslation(glm::mat4& model)
+void Mesh::setupTranslation(glm::mat4& model, glm::vec3 pointOnCurve)
 {
-	model = glm::translate(model, glm::vec3(initialPosition.x + translateXOffset, initialPosition.y + translateYOffset, initialPosition.z + translateZOffset));
+	model = glm::translate(model, glm::vec3(pointOnCurve.x + translateXOffset, pointOnCurve.y + translateYOffset, pointOnCurve.z + translateZOffset));
 }
 
 // configura a escala do objeto. A escala é a mesma para todos os eixos

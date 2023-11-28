@@ -13,9 +13,9 @@ public:
 	Mesh() {}
 	~Mesh() {}
 	void initialize(GLuint VAO, Shader* shader, int nVerts, GLuint texID, glm::vec3 initialPosition, float initialScale, glm::vec3 ka, glm::vec3 ks, float q);
-	void update(); // atualiza a matriz de transformações
+	void update(glm::vec3 pointOnCurve); // atualiza a matriz de transformações
 	void setupRotation(glm::mat4& model);
-	void setupTranslation(glm::mat4& model);
+	void setupTranslation(glm::mat4& model, glm::vec3 pointOnCurve);
 	void setupScale(glm::mat4& model);
 	void updateRotateChar(char newRotateChar);
 	void updateTranslateChar(char newTranslateChar);
@@ -30,6 +30,7 @@ public:
 	void deleteVAO();
 	string getTextureFilePath();
 	void setTextureFilePath(string path);
+	glm::vec3 getPosition();
 
 protected:
 	GLuint VAO; // id do buffer da geometria

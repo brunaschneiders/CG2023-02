@@ -1,10 +1,16 @@
-# Trabalho GA
+# Trabalho GB
 
 O trabalho consiste em um leitor e visualizador de cenas tridimensionais a partir de arquivos .obj. Para isso, os conhecimentos sobre câmera sintética, modelagem 3D e transformações nos objetos estão sendo aplicados.
 
+![Demonstração](./demo.gif)
+
+## Arquivos de configuração
+
+- A pasta config armazena os arquivos txt que guardam as configurações dos objetos
+
 ## Seleção dos objetos
 
-- `Arrow right` e `Arrow left` alternam entre os objetos disponíveis.
+- `Arrow right` e `Arrow left` alternam entre os objetos disponíveis para que as transformações sejam aplicadas.
 
 ## Rotação em x, y e z do objeto selecionado
 
@@ -54,8 +60,3 @@ O trabalho consiste em um leitor e visualizador de cenas tridimensionais a parti
 - `3`: muda para visualização traseira do objeto
 - `4`: muda para visualização esquerda do objeto
 - `5`: muda para visualização de cima do objeto
-
-## Visualização de múltiplos objetos
-
-- `SPACE`: alterna entre a visualização de um objeto ou de todos os objetos disponíveis na cena.
-OBS.: As ações continuam sendo aplicadas da mesma forma.

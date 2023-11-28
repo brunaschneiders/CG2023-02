@@ -20,11 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\glad.c" />
+    <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Curve.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Origem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bezier.h" />
+    <ClInclude Include="Curve.h" />
     <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>

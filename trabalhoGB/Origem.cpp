@@ -11,9 +11,11 @@
 #include <assert.h>
 #include <cstdio>
 #include <map>
-
+#include <random>
+#include <algorithm>
 
 using namespace std;
+using std::string;
 
 // GLAD
 #include <glad/glad.h>
@@ -33,6 +35,7 @@ using namespace std;
 #include "Shader.h"
 #include "Camera.h"
 #include "Mesh.h"
+#include "Bezier.h"
 
 
 // Configuracao da window
@@ -44,6 +47,9 @@ int loadSimpleOBJ(string filepath, int& nVerts, glm::vec3 color = glm::vec3(1.0,
 int loadTexture(string path);
 void loadMtl(string path, string& textureFilePathProp, glm::vec3& ka, glm::vec3& ks, float& q);
 void loadObjectConfig(string path, string& objFilePath, string& mtlFilePath, glm::vec3& objPosition, float& objScale);
+
+// Parametric curves
+std::vector<glm::vec3> generateTranslatePoints(string path);
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
@@ -128,7 +134,6 @@ int main()
 
 		VAO = loadSimpleOBJ(objFilePath, nVerts);
 
-		cout << "nVerts: " << nVerts << "mtlFilePath" << mtlFilePath << endl;
 		object.initialize(VAO, &shader, nVerts, texID, objPosition, objScale, ka, ks, ns);
 		objects.push_back(object);
 	};
@@ -137,6 +142,17 @@ int main()
 
 	camera.initialize(&shader, WIDTH, HEIGHT);
 
+	vector<glm::vec3> basePoints = generateTranslatePoints("../3DModels/config/circle.txt");
+
+	Bezier bezier;
+	bezier.setControlPoints(basePoints);
+	bezier.setShader(&shader);
+	bezier.generateCurve(30);
+	int nbCurvePoints = bezier.getNbCurvePoints();
+	int partSize = nbCurvePoints / 3;
+
+	int i = 0;
+	int speed = 0;
 
 	// Loop da aplica��o - "game loop"
 	while (!glfwWindowShouldClose(window))
@@ -151,13 +167,29 @@ int main()
 		glLineWidth(10);
 		glPointSize(20);
 
+		camera.update();
+
+		
+		int currentObject = 0;
+
+		glm::vec3 pointOnCurve = bezier.getPointOnCurve(i);
 
 		for (Mesh object : objects) {
-			object.update();
+			if (currentObject == 0) {
+				object.update(pointOnCurve);
+			}
+			else {
+				object.update(object.getPosition());
+			}
 			object.draw();
+
+			currentObject += 1;
 		}
 
-		camera.update();
+		if (speed++ == 20) {
+			speed = 0;
+			i = (i + 1) % nbCurvePoints;
+		}
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);
@@ -496,4 +528,33 @@ void loadMtl(string path, string& textureFilePathProp, glm::vec3& ka, glm::vec3&
 	}
 
 	file.close();
+}
+
+std::vector<glm::vec3> generateTranslatePoints(string path) {
+	std::ifstream file(path);
+
+	if (!file.is_open()) {
+		std::cout << "Failed to open the points file." << std::endl;
+	}
+
+	string line;
+	vector <glm::vec3> points;
+
+	while (std::getline(file, line)) {
+		if (line.length() > 0) {
+
+			std::istringstream iss(line);
+			string prefix;
+			char comma;
+
+			glm::vec3 temp_points;
+			iss >> temp_points.x >> comma >> temp_points.y >> comma >> temp_points.z;
+
+			points.push_back(temp_points);
+		}
+	}
+
+	file.close();
+
+	return points;
 }

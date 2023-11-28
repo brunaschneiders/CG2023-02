@@ -7,7 +7,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "trabalhoGB", "trabalhoGB.vc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{8A362D15-E6A8-40EA-9939-7B4A54E58F39}"
 	ProjectSection(SolutionItems) = preProject
+		Bezier.cpp = Bezier.cpp
+		Bezier.h = Bezier.h
 		Camera.h = Camera.h
+		Curve.cpp = Curve.cpp
+		Curve.h = Curve.h
 	EndProjectSection
 EndProject
 Global
